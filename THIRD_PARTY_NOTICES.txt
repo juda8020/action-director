@@ -1,0 +1,21 @@
+Action Director Sample Asset Notices
+====================================
+
+Action Director source code is distributed under the MIT License in LICENSE.
+
+Bundled 2D sample
+-----------------
+
+sword-fighter-slash-sheet.png is an original eight-frame sample generated for
+Action Director. To the extent copyright or related rights exist, the project
+owner dedicates them under CC0 1.0 Universal. See
+samples/assets/LICENSE-original-sword-fighter.txt for the complete record.
+
+Bundled 3D sample
+-----------------
+
+cc0-animated-man.fbx (original file name Male_Shirt.fbx) was created by
+Quaternius and released under CC0 1.0 Universal. It is not an Adobe or Mixamo
+asset. See samples/assets/LICENSE-cc0-animated-man.txt for source and checksum.
+
+CC0 1.0 Universal: https://creativecommons.org/publicdomain/zero/1.0/

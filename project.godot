@@ -1,0 +1,58 @@
+; Engine configuration file.
+; Action Director targets the Godot 4.7 stable line.
+
+config_version=5
+
+[application]
+
+config/name="Action Director"
+run/main_scene="res://src/app/action_director_app.tscn"
+config/features=PackedStringArray("4.7")
+config/icon="res://assets/app-icon.svg"
+
+[display]
+
+window/size/viewport_width=1600
+window/size/viewport_height=960
+window/size/window_width_override=1440
+window/size/window_height_override=900
+window/stretch/mode="canvas_items"
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/default_filters/use_nearest_mipmap_filter=false
+textures/vram_compression/import_etc2_astc=true
+
+[gui]
+
+theme/custom="res://src/ui/action_director_theme.tres"
+theme/default_font_multichannel_signed_distance_field=true
+
+[input]
+
+play_pause={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"physical_keycode":32,"unicode":32)]
+}
+step_back={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"physical_keycode":44,"unicode":44)]
+}
+step_forward={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"physical_keycode":46,"unicode":46)]
+}
+reset_preview={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"physical_keycode":82,"unicode":114)]
+}
+toggle_compare={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"physical_keycode":67,"unicode":99)]
+}
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/action_director_runtime/plugin.cfg")

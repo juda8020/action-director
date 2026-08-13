@@ -1,0 +1,18 @@
+Original Sword Fighter Spritesheet
+==================================
+
+File: sword-fighter-slash-sheet.png
+Created: 2026-08-13
+
+This original eight-frame sample was generated specifically for the open-source
+Action Director project with OpenAI's built-in image generation tool. It was not
+copied from a third-party game, marketplace pack, Mixamo, or stock asset.
+
+SHA-256: c5a095bf186ad342ac311509f39369fbdd3cbdf06d83dee81257ce40549df2eb
+
+To the extent that copyright or related rights exist in this asset, the Action
+Director project owner dedicates those rights under CC0 1.0 Universal:
+https://creativecommons.org/publicdomain/zero/1.0/
+
+This notice is about the bundled sample art only. Action Director itself is MIT
+licensed. Users remain responsible for the rights to assets they import.

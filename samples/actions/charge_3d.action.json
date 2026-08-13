@@ -1,0 +1,55 @@
+{
+	"schema_version": "1.0.0",
+	"action_id": "sample-3d-charge",
+	"name": "3D FBX Motion Demo",
+	"dimension": "3d",
+	"tick_rate": 60,
+	"actors": [
+		{"id": "charger", "name": "Charger", "role": "performer", "origin": [0, 0, 0]},
+		{"id": "dummy", "name": "Target", "role": "target", "origin": [0, 0, -4]}
+	],
+	"assets": [
+		{
+			"id": "cc0_animated_man",
+			"name": "CC0 Animated Man",
+			"kind": "model",
+			"path": "../assets/cc0-animated-man.fbx",
+			"source_extension": "fbx",
+			"importer": "ufbx",
+			"skeleton_count": 1,
+			"mesh_count": 1,
+			"animation_clips": [
+				"HumanArmature|Man_Clapping",
+				"HumanArmature|Man_Death",
+				"HumanArmature|Man_Idle",
+				"HumanArmature|Man_Jump",
+				"HumanArmature|Man_Punch",
+				"HumanArmature|Man_Run",
+				"HumanArmature|Man_RunningJump",
+				"HumanArmature|Man_Sitting",
+				"HumanArmature|Man_Standing",
+				"HumanArmature|Man_SwordSlash",
+				"HumanArmature|Man_Walk"
+			],
+			"mixamo_compatible": true,
+			"license": "CC0-1.0",
+			"source_url": "https://graysoft.dev/3d/m/man-fjHyMd5Wxw.html",
+			"note": "Redistributable compatibility demo; not an Adobe Mixamo asset."
+		}
+	],
+	"takes": [
+		{
+			"id": "default-3d",
+			"name": "Default",
+			"duration_ticks": 90,
+			"markers": [{"id": "impact", "name": "Impact", "tick": 38}, {"id": "finish", "name": "Finish", "tick": 90}],
+			"branches": [],
+			"tracks": [
+				{"id": "3d-animation", "name": "Animation", "kind": "animation", "events": [{"id": "3d-anim", "type": "animation", "start_tick": 0, "end_tick": 90, "actor_id": "charger", "payload": {"clip": "HumanArmature|Man_Run", "speed": 1.0}}]},
+				{"id": "3d-motion", "name": "Motion", "kind": "motion", "events": [{"id": "3d-charge", "type": "motion", "start_tick": 20, "end_tick": 38, "actor_id": "charger", "payload": {"delta": [0, 0, -3.2], "space": "local"}}]},
+				{"id": "3d-hitbox-track", "name": "Hitbox", "kind": "hitbox", "events": [{"id": "3d-hitbox", "type": "hitbox", "start_tick": 34, "end_tick": 42, "actor_id": "charger", "payload": {"anchor": "chest", "shape": {"kind": "box", "offset": [0, 1.1, -0.8], "size": [1.2, 1.7, 1.5]}}}]},
+				{"id": "3d-feel", "name": "Feel", "kind": "feel", "events": [{"id": "3d-stop", "type": "feel", "start_tick": 38, "end_tick": 43, "actor_id": "charger", "payload": {"kind": "hit_stop", "strength": 1.0}}]}
+			]
+		}
+	]
+}

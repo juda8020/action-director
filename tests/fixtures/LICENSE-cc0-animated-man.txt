@@ -1,0 +1,6 @@
+Fixture: cc0-animated-man.fbx (original file name: Male_Shirt.fbx)
+Creator: Quaternius
+Source: https://graysoft.dev/3d/m/man-fjHyMd5Wxw.html
+License: CC0 1.0 Universal (public domain dedication)
+Downloaded for Action Director UFBX import regression testing.
+SHA-256: 744a9414ed653865bb8aa8225ef568a79955f3b3467274ebb00acdd51576b589

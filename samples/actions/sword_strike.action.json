@@ -1,0 +1,101 @@
+{
+	"schema_version": "1.0.0",
+	"action_id": "sample-sword-strike",
+	"name": "2D Spritesheet Sword Demo",
+	"dimension": "2d",
+	"tick_rate": 60,
+	"actors": [
+		{"id": "hero", "name": "Hero", "role": "performer", "origin": [0, 0]},
+		{"id": "dummy", "name": "Training Dummy", "role": "target", "origin": [180, 0]}
+	],
+	"assets": [
+		{
+			"id": "sword-fighter-sheet",
+			"name": "Original Sword Fighter Spritesheet",
+			"kind": "image",
+			"path": "../assets/sword-fighter-slash-sheet.png",
+			"source_extension": "png",
+			"license": "CC0-1.0",
+			"frame_count": 8,
+			"frames_per_second": 12,
+			"layout": {"columns": 8, "rows": 1},
+			"note": "Original sample art generated specifically for Action Director; see LICENSE-original-sword-fighter.txt."
+		}
+	],
+	"takes": [
+		{
+			"id": "take-a",
+			"name": "Take A",
+			"duration_ticks": 72,
+			"markers": [
+				{"id": "a-contact", "name": "Contact", "tick": 22},
+				{"id": "a-recovery-marker", "name": "Recovery", "tick": 34},
+				{"id": "a-finish", "name": "Finish", "tick": 72}
+			],
+			"branches": [],
+			"tracks": [
+				{"id": "a-animation", "name": "Animation", "kind": "animation", "events": [
+					{"id": "a-anim", "type": "animation", "start_tick": 0, "end_tick": 72, "actor_id": "hero", "payload": {"clip": "sword_strike", "speed": 1.0}}
+				]},
+				{"id": "a-windows", "name": "Combat Windows", "kind": "window", "events": [
+					{"id": "a-startup", "type": "window", "start_tick": 0, "end_tick": 20, "actor_id": "hero", "payload": {"kind": "startup"}},
+					{"id": "a-active", "type": "window", "start_tick": 20, "end_tick": 26, "actor_id": "hero", "payload": {"kind": "active"}},
+					{"id": "a-recovery", "type": "window", "start_tick": 26, "end_tick": 72, "actor_id": "hero", "payload": {"kind": "recovery"}},
+					{"id": "a-cancel", "type": "window", "start_tick": 50, "end_tick": 65, "actor_id": "hero", "payload": {"kind": "cancel", "tag": "dodge"}}
+				]},
+				{"id": "a-hitbox-track", "name": "Hitbox", "kind": "hitbox", "events": [
+					{"id": "a-hitbox", "type": "hitbox", "start_tick": 20, "end_tick": 26, "actor_id": "hero", "payload": {"anchor": "weapon", "shape": {"kind": "rect", "offset": [88, -4], "size": [118, 64]}}}
+				]},
+				{"id": "a-motion", "name": "Motion", "kind": "motion", "events": [
+					{"id": "a-lunge", "type": "motion", "start_tick": 17, "end_tick": 18, "actor_id": "hero", "payload": {"delta": [34, 0], "space": "local"}}
+				]},
+				{"id": "a-feel", "name": "Feel", "kind": "feel", "events": [
+					{"id": "a-hit-stop", "type": "feel", "start_tick": 22, "end_tick": 26, "actor_id": "hero", "payload": {"kind": "hit_stop", "strength": 1.0}},
+					{"id": "a-shake", "type": "feel", "start_tick": 22, "end_tick": 27, "actor_id": "hero", "payload": {"kind": "camera_shake", "strength": 0.65}}
+				]},
+				{"id": "a-audio", "name": "Audio / VFX", "kind": "audio", "events": [
+					{"id": "a-whoosh", "type": "audio", "start_tick": 17, "end_tick": 17, "actor_id": "hero", "payload": {"asset_key": "sword_whoosh"}},
+					{"id": "a-spark", "type": "vfx", "start_tick": 22, "end_tick": 28, "actor_id": "dummy", "payload": {"asset_key": "impact_spark"}}
+				]}
+			]
+		},
+		{
+			"id": "take-b",
+			"name": "Take B",
+			"duration_ticks": 60,
+			"markers": [
+				{"id": "b-contact", "name": "Contact", "tick": 16},
+				{"id": "b-recovery-marker", "name": "Recovery", "tick": 28},
+				{"id": "b-finish", "name": "Finish", "tick": 60}
+			],
+			"branches": [
+				{"id": "b-on-block", "at_tick": 24, "condition": {"kind": "block", "value": true}, "target_marker": "b-recovery-marker"}
+			],
+			"tracks": [
+				{"id": "b-animation", "name": "Animation", "kind": "animation", "events": [
+					{"id": "b-anim", "type": "animation", "start_tick": 0, "end_tick": 60, "actor_id": "hero", "payload": {"clip": "sword_strike", "speed": 1.15}}
+				]},
+				{"id": "b-windows", "name": "Combat Windows", "kind": "window", "events": [
+					{"id": "b-startup", "type": "window", "start_tick": 0, "end_tick": 15, "actor_id": "hero", "payload": {"kind": "startup"}},
+					{"id": "b-active", "type": "window", "start_tick": 15, "end_tick": 22, "actor_id": "hero", "payload": {"kind": "active"}},
+					{"id": "b-recovery", "type": "window", "start_tick": 22, "end_tick": 60, "actor_id": "hero", "payload": {"kind": "recovery"}},
+					{"id": "b-cancel", "type": "window", "start_tick": 40, "end_tick": 55, "actor_id": "hero", "payload": {"kind": "cancel", "tag": "dodge"}}
+				]},
+				{"id": "b-hitbox-track", "name": "Hitbox", "kind": "hitbox", "events": [
+					{"id": "b-hitbox", "type": "hitbox", "start_tick": 15, "end_tick": 22, "actor_id": "hero", "payload": {"anchor": "weapon", "shape": {"kind": "rect", "offset": [96, -4], "size": [132, 68]}}}
+				]},
+				{"id": "b-motion", "name": "Motion", "kind": "motion", "events": [
+					{"id": "b-lunge", "type": "motion", "start_tick": 12, "end_tick": 13, "actor_id": "hero", "payload": {"delta": [48, 0], "space": "local"}}
+				]},
+				{"id": "b-feel", "name": "Feel", "kind": "feel", "events": [
+					{"id": "b-hit-stop", "type": "feel", "start_tick": 16, "end_tick": 21, "actor_id": "hero", "payload": {"kind": "hit_stop", "strength": 1.0}},
+					{"id": "b-shake", "type": "feel", "start_tick": 16, "end_tick": 22, "actor_id": "hero", "payload": {"kind": "camera_shake", "strength": 0.85}}
+				]},
+				{"id": "b-audio", "name": "Audio / VFX", "kind": "audio", "events": [
+					{"id": "b-whoosh", "type": "audio", "start_tick": 12, "end_tick": 12, "actor_id": "hero", "payload": {"asset_key": "sword_whoosh"}},
+					{"id": "b-spark", "type": "vfx", "start_tick": 16, "end_tick": 23, "actor_id": "dummy", "payload": {"asset_key": "impact_spark"}}
+				]}
+			]
+		}
+	]
+}
