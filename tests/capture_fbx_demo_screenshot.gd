@@ -19,7 +19,8 @@ func _capture() -> void:
 	app.language_picker.select(0)
 	app._apply_locale()
 	app._open_action("res://samples/actions/charge_3d.action.json")
-	app._set_tick(28)
+	app._on_event_selected(app._find_event("3d-hitbox"), "3d-hitbox-track")
+	app._set_tick(38)
 	for _frame in range(12):
 		await process_frame
 	await RenderingServer.frame_post_draw

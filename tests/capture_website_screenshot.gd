@@ -18,6 +18,7 @@ func _capture() -> void:
 	app.localization.set_locale("en")
 	app.language_picker.select(0)
 	app._apply_locale()
+	app._on_event_selected(app._find_event("a-lunge"), "a-motion")
 	app._set_tick(18)
 	await process_frame
 	await RenderingServer.frame_post_draw

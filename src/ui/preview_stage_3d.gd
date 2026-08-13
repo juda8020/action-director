@@ -143,6 +143,7 @@ func bind_project_assets(asset_root: String) -> void:
 			imported_model = loaded.scene
 			performer.visible = int(loaded.metadata.get("mesh_count", 0)) == 0
 			imported_model.position = _base_position
+			imported_model.scale = Vector3.ONE * 1.22
 			world_root.add_child(imported_model)
 			_collect_animation_players(imported_model)
 			set_tick(current_tick)
@@ -213,23 +214,38 @@ func _build_world() -> void:
 	var environment := WorldEnvironment.new()
 	var environment_resource := Environment.new()
 	environment_resource.background_mode = Environment.BG_COLOR
-	environment_resource.background_color = Color("11151d")
+	environment_resource.background_color = Color("090e15")
 	environment_resource.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	environment_resource.ambient_light_color = Color("b8c2d4")
-	environment_resource.ambient_light_energy = 0.42
+	environment_resource.ambient_light_color = Color("c8d7eb")
+	environment_resource.ambient_light_energy = 0.58
 	environment.environment = environment_resource
 	world_root.add_child(environment)
 	var light := DirectionalLight3D.new()
-	light.rotation_degrees = Vector3(-48, -30, 0)
-	light.light_energy = 1.4
+	light.rotation_degrees = Vector3(-52, -34, 0)
+	light.light_color = Color("dbe8ff")
+	light.light_energy = 1.65
 	world_root.add_child(light)
+	var rim := OmniLight3D.new()
+	rim.position = Vector3(-2.4, 3.1, 1.7)
+	rim.light_color = Color("62d7a3")
+	rim.light_energy = 2.6
+	rim.omni_range = 5.5
+	world_root.add_child(rim)
+	var target_light := OmniLight3D.new()
+	target_light.position = Vector3(0.8, 2.2, -3.0)
+	target_light.light_color = Color("f3b85b")
+	target_light.light_energy = 2.0
+	target_light.omni_range = 4.0
+	world_root.add_child(target_light)
 	var ground := MeshInstance3D.new()
 	var ground_mesh := BoxMesh.new()
-	ground_mesh.size = Vector3(12, 0.12, 9)
+	ground_mesh.size = Vector3(10, 0.12, 8)
 	ground.mesh = ground_mesh
 	ground.position = Vector3(0, -0.06, 0)
-	ground.material_override = _material(Color("262d39"))
+	ground.material_override = _material(Color("202938"))
 	world_root.add_child(ground)
+	_add_stage_marker(Vector3(-1.5, 0.012, 1.0), Color("62d7a3"))
+	_add_stage_marker(Vector3(0, 0.014, -3.0), Color("f3b85b"))
 	performer = MeshInstance3D.new()
 	var performer_mesh := CapsuleMesh.new()
 	performer_mesh.radius = 0.48
@@ -250,13 +266,34 @@ func _build_world() -> void:
 	hitbox.mesh = BoxMesh.new()
 	var hitbox_material := _material(Color(1.0, 0.18, 0.24, 0.35))
 	hitbox_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	hitbox_material.emission_enabled = true
+	hitbox_material.emission = Color("ff3347")
+	hitbox_material.emission_energy_multiplier = 1.8
 	hitbox.material_override = hitbox_material
 	hitbox.visible = false
 	world_root.add_child(hitbox)
 	camera = Camera3D.new()
-	camera.position = Vector3(6.7, 4.8, 7.8)
-	camera.look_at_from_position(camera.position, Vector3(0, 0.7, -1.2))
+	camera.position = Vector3(7.2, 4.6, 8.2)
+	camera.fov = 50.0
+	camera.look_at_from_position(camera.position, Vector3(-0.2, 1.55, -1.2))
 	world_root.add_child(camera)
+
+
+func _add_stage_marker(position: Vector3, color: Color) -> void:
+	var marker := MeshInstance3D.new()
+	var mesh := CylinderMesh.new()
+	mesh.top_radius = 0.82
+	mesh.bottom_radius = 0.82
+	mesh.height = 0.025
+	marker.mesh = mesh
+	marker.position = position
+	var marker_material := _material(Color(color, 0.18))
+	marker_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	marker_material.emission_enabled = true
+	marker_material.emission = color
+	marker_material.emission_energy_multiplier = 0.55
+	marker.material_override = marker_material
+	world_root.add_child(marker)
 
 
 func _material(color: Color) -> StandardMaterial3D:
