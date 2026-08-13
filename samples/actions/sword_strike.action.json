@@ -62,38 +62,38 @@
 		{
 			"id": "take-b",
 			"name": "Take B",
-			"duration_ticks": 60,
+			"duration_ticks": 72,
 			"markers": [
-				{"id": "b-contact", "name": "Contact", "tick": 16},
+				{"id": "b-contact", "name": "Contact", "tick": 18},
 				{"id": "b-recovery-marker", "name": "Recovery", "tick": 28},
-				{"id": "b-finish", "name": "Finish", "tick": 60}
+				{"id": "b-finish", "name": "Finish", "tick": 72}
 			],
 			"branches": [
 				{"id": "b-on-block", "at_tick": 24, "condition": {"kind": "block", "value": true}, "target_marker": "b-recovery-marker"}
 			],
 			"tracks": [
 				{"id": "b-animation", "name": "Animation", "kind": "animation", "events": [
-					{"id": "b-anim", "type": "animation", "start_tick": 0, "end_tick": 60, "actor_id": "hero", "payload": {"clip": "sword_strike", "speed": 1.15}}
+					{"id": "b-anim", "type": "animation", "start_tick": 0, "end_tick": 72, "actor_id": "hero", "payload": {"clip": "sword_strike", "speed": 1.0}}
 				]},
 				{"id": "b-windows", "name": "Combat Windows", "kind": "window", "events": [
-					{"id": "b-startup", "type": "window", "start_tick": 0, "end_tick": 15, "actor_id": "hero", "payload": {"kind": "startup"}},
-					{"id": "b-active", "type": "window", "start_tick": 15, "end_tick": 22, "actor_id": "hero", "payload": {"kind": "active"}},
-					{"id": "b-recovery", "type": "window", "start_tick": 22, "end_tick": 60, "actor_id": "hero", "payload": {"kind": "recovery"}},
-					{"id": "b-cancel", "type": "window", "start_tick": 40, "end_tick": 55, "actor_id": "hero", "payload": {"kind": "cancel", "tag": "dodge"}}
+					{"id": "b-startup", "type": "window", "start_tick": 0, "end_tick": 16, "actor_id": "hero", "payload": {"kind": "startup"}},
+					{"id": "b-active", "type": "window", "start_tick": 16, "end_tick": 23, "actor_id": "hero", "payload": {"kind": "active"}},
+					{"id": "b-recovery", "type": "window", "start_tick": 23, "end_tick": 72, "actor_id": "hero", "payload": {"kind": "recovery"}},
+					{"id": "b-cancel", "type": "window", "start_tick": 46, "end_tick": 62, "actor_id": "hero", "payload": {"kind": "cancel", "tag": "dodge"}}
 				]},
 				{"id": "b-hitbox-track", "name": "Hitbox", "kind": "hitbox", "events": [
-					{"id": "b-hitbox", "type": "hitbox", "start_tick": 15, "end_tick": 22, "actor_id": "hero", "payload": {"anchor": "weapon", "shape": {"kind": "rect", "offset": [96, -4], "size": [132, 68]}}}
+					{"id": "b-hitbox", "type": "hitbox", "start_tick": 16, "end_tick": 23, "actor_id": "hero", "payload": {"anchor": "weapon", "shape": {"kind": "rect", "offset": [92, -4], "size": [124, 64]}}}
 				]},
 				{"id": "b-motion", "name": "Motion", "kind": "motion", "events": [
-					{"id": "b-lunge", "type": "motion", "start_tick": 12, "end_tick": 13, "actor_id": "hero", "payload": {"delta": [48, 0], "space": "local"}}
+					{"id": "b-lunge", "type": "motion", "start_tick": 16, "end_tick": 18, "actor_id": "hero", "payload": {"delta": [42, 0], "space": "local"}}
 				]},
 				{"id": "b-feel", "name": "Feel", "kind": "feel", "events": [
-					{"id": "b-hit-stop", "type": "feel", "start_tick": 16, "end_tick": 21, "actor_id": "hero", "payload": {"kind": "hit_stop", "strength": 1.0}},
-					{"id": "b-shake", "type": "feel", "start_tick": 16, "end_tick": 22, "actor_id": "hero", "payload": {"kind": "camera_shake", "strength": 0.85}}
+					{"id": "b-hit-stop", "type": "feel", "start_tick": 18, "end_tick": 22, "actor_id": "hero", "payload": {"kind": "hit_stop", "strength": 1.0}},
+					{"id": "b-shake", "type": "feel", "start_tick": 18, "end_tick": 23, "actor_id": "hero", "payload": {"kind": "camera_shake", "strength": 0.85}}
 				]},
 				{"id": "b-audio", "name": "Audio / VFX", "kind": "audio", "events": [
-					{"id": "b-whoosh", "type": "audio", "start_tick": 12, "end_tick": 12, "actor_id": "hero", "payload": {"asset_key": "sword_whoosh"}},
-					{"id": "b-spark", "type": "vfx", "start_tick": 16, "end_tick": 23, "actor_id": "dummy", "payload": {"asset_key": "impact_spark"}}
+					{"id": "b-whoosh", "type": "audio", "start_tick": 16, "end_tick": 16, "actor_id": "hero", "payload": {"asset_key": "sword_whoosh"}},
+					{"id": "b-spark", "type": "vfx", "start_tick": 18, "end_tick": 24, "actor_id": "dummy", "payload": {"asset_key": "impact_spark"}}
 				]}
 			]
 		}

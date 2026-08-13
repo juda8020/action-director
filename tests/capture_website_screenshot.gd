@@ -18,8 +18,10 @@ func _capture() -> void:
 	app.localization.set_locale("en")
 	app.language_picker.select(0)
 	app._apply_locale()
-	app._on_event_selected(app._find_event("a-lunge"), "a-motion")
+	app.set_showcase_mode(true)
+	app._on_event_selected(app._find_event("a-hitbox"), "a-hitbox-track")
 	app._set_tick(18)
+	app._set_status("A is still in startup; B is active and reaches contact 4 ticks sooner.")
 	await process_frame
 	await RenderingServer.frame_post_draw
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("res://docs/media"))

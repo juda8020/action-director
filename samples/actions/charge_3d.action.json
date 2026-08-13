@@ -39,16 +39,31 @@
 	],
 	"takes": [
 		{
-			"id": "default-3d",
-			"name": "Default",
+			"id": "take-a-3d",
+			"name": "Take A",
 			"duration_ticks": 90,
-			"markers": [{"id": "impact", "name": "Impact", "tick": 38}, {"id": "finish", "name": "Finish", "tick": 90}],
+			"markers": [{"id": "3d-a-contact", "name": "Contact", "tick": 40}, {"id": "3d-a-finish", "name": "Finish", "tick": 90}],
 			"branches": [],
 			"tracks": [
-				{"id": "3d-animation", "name": "Animation", "kind": "animation", "events": [{"id": "3d-anim", "type": "animation", "start_tick": 0, "end_tick": 90, "actor_id": "charger", "payload": {"clip": "HumanArmature|Man_Run", "speed": 1.0}}]},
-				{"id": "3d-motion", "name": "Motion", "kind": "motion", "events": [{"id": "3d-charge", "type": "motion", "start_tick": 20, "end_tick": 38, "actor_id": "charger", "payload": {"delta": [0, 0, -3.2], "space": "local"}}]},
-				{"id": "3d-hitbox-track", "name": "Hitbox", "kind": "hitbox", "events": [{"id": "3d-hitbox", "type": "hitbox", "start_tick": 34, "end_tick": 42, "actor_id": "charger", "payload": {"anchor": "chest", "shape": {"kind": "box", "offset": [0, 1.1, -0.8], "size": [1.2, 1.7, 1.5]}}}]},
-				{"id": "3d-feel", "name": "Feel", "kind": "feel", "events": [{"id": "3d-stop", "type": "feel", "start_tick": 38, "end_tick": 43, "actor_id": "charger", "payload": {"kind": "hit_stop", "strength": 1.0}}]}
+				{"id": "3d-a-animation", "name": "Animation", "kind": "animation", "events": [{"id": "3d-a-anim", "type": "animation", "start_tick": 0, "end_tick": 90, "actor_id": "charger", "payload": {"clip": "HumanArmature|Man_Run", "speed": 1.0}}]},
+				{"id": "3d-a-window", "name": "Combat Windows", "kind": "window", "events": [{"id": "3d-a-startup", "type": "window", "start_tick": 0, "end_tick": 38, "actor_id": "charger", "payload": {"kind": "startup"}}, {"id": "3d-a-active", "type": "window", "start_tick": 38, "end_tick": 45, "actor_id": "charger", "payload": {"kind": "active"}}, {"id": "3d-a-recovery", "type": "window", "start_tick": 45, "end_tick": 90, "actor_id": "charger", "payload": {"kind": "recovery"}}]},
+				{"id": "3d-a-motion", "name": "Motion", "kind": "motion", "events": [{"id": "3d-a-charge", "type": "motion", "start_tick": 30, "end_tick": 40, "actor_id": "charger", "payload": {"delta": [0, 0, -2.8], "space": "local"}}]},
+				{"id": "3d-a-hitbox-track", "name": "Hitbox", "kind": "hitbox", "events": [{"id": "3d-a-hitbox", "type": "hitbox", "start_tick": 38, "end_tick": 45, "actor_id": "charger", "payload": {"anchor": "chest", "shape": {"kind": "box", "offset": [0, 0.95, -0.38], "size": [0.82, 1.12, 0.92]}}}]},
+				{"id": "3d-a-feel", "name": "Feel", "kind": "feel", "events": [{"id": "3d-a-stop", "type": "feel", "start_tick": 40, "end_tick": 44, "actor_id": "charger", "payload": {"kind": "hit_stop", "strength": 1.0}}]}
+			]
+		},
+		{
+			"id": "take-b-3d",
+			"name": "Take B",
+			"duration_ticks": 90,
+			"markers": [{"id": "3d-b-contact", "name": "Contact", "tick": 35}, {"id": "3d-b-finish", "name": "Finish", "tick": 90}],
+			"branches": [],
+			"tracks": [
+				{"id": "3d-b-animation", "name": "Animation", "kind": "animation", "events": [{"id": "3d-b-anim", "type": "animation", "start_tick": 0, "end_tick": 90, "actor_id": "charger", "payload": {"clip": "HumanArmature|Man_Run", "speed": 1.0}}]},
+				{"id": "3d-b-window", "name": "Combat Windows", "kind": "window", "events": [{"id": "3d-b-startup", "type": "window", "start_tick": 0, "end_tick": 33, "actor_id": "charger", "payload": {"kind": "startup"}}, {"id": "3d-b-active", "type": "window", "start_tick": 33, "end_tick": 41, "actor_id": "charger", "payload": {"kind": "active"}}, {"id": "3d-b-recovery", "type": "window", "start_tick": 41, "end_tick": 90, "actor_id": "charger", "payload": {"kind": "recovery"}}]},
+				{"id": "3d-b-motion", "name": "Motion", "kind": "motion", "events": [{"id": "3d-b-charge", "type": "motion", "start_tick": 25, "end_tick": 35, "actor_id": "charger", "payload": {"delta": [0, 0, -3.15], "space": "local"}}]},
+				{"id": "3d-b-hitbox-track", "name": "Hitbox", "kind": "hitbox", "events": [{"id": "3d-b-hitbox", "type": "hitbox", "start_tick": 33, "end_tick": 41, "actor_id": "charger", "payload": {"anchor": "chest", "shape": {"kind": "box", "offset": [0, 0.95, -0.42], "size": [0.9, 1.16, 1.02]}}}]},
+				{"id": "3d-b-feel", "name": "Feel", "kind": "feel", "events": [{"id": "3d-b-stop", "type": "feel", "start_tick": 35, "end_tick": 40, "actor_id": "charger", "payload": {"kind": "hit_stop", "strength": 1.0}}]}
 			]
 		}
 	]

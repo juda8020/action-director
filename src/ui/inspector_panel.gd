@@ -14,6 +14,9 @@ var actor_picker: OptionButton
 var start_spin: SpinBox
 var end_spin: SpinBox
 var payload_text: TextEdit
+var payload_summary: Label
+var advanced_button: Button
+var advanced_container: VBoxContainer
 var apply_button: Button
 var error_label: Label
 var localization: ActionLocalization
@@ -79,14 +82,30 @@ func _ready() -> void:
 	end_spin.max_value = 100000
 	end_spin.value_changed.connect(func(_value: float): _validate_payload())
 	end_column.add_child(end_spin)
+	var payload_section_label := _label(localization.text("event_settings"), 11, Color("7f8999"))
+	field_labels.event_settings = payload_section_label
+	fields_container.add_child(payload_section_label)
+	payload_summary = _label("—", 13, Color("d8dde7"))
+	payload_summary.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	payload_summary.custom_minimum_size.y = 58
+	fields_container.add_child(payload_summary)
+	advanced_button = Button.new()
+	advanced_button.text = localization.text("show_advanced")
+	advanced_button.toggle_mode = true
+	advanced_button.pressed.connect(_toggle_advanced)
+	fields_container.add_child(advanced_button)
+	advanced_container = VBoxContainer.new()
+	advanced_container.add_theme_constant_override("separation", 5)
+	advanced_container.visible = false
+	fields_container.add_child(advanced_container)
 	field_labels.payload_json = _label(localization.text("payload_json"), 11, Color("7f8999"))
-	fields_container.add_child(field_labels.payload_json)
+	advanced_container.add_child(field_labels.payload_json)
 	payload_text = TextEdit.new()
-	payload_text.custom_minimum_size.y = 190
+	payload_text.custom_minimum_size.y = 170
 	payload_text.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	payload_text.wrap_mode = TextEdit.LINE_WRAPPING_BOUNDARY
 	payload_text.text_changed.connect(_validate_payload)
-	fields_container.add_child(payload_text)
+	advanced_container.add_child(payload_text)
 	error_label = _label("", 11, Color("ff7b85"))
 	error_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	fields_container.add_child(error_label)
@@ -116,6 +135,7 @@ func set_localization(value: ActionLocalization) -> void:
 		(field_labels[key] as Label).text = localization.text(key)
 	apply_button.text = localization.text("apply_event")
 	hint_label.text = localization.text("inspector_hint")
+	advanced_button.text = localization.text("hide_advanced") if advanced_container.visible else localization.text("show_advanced")
 	_rebuild_type_picker()
 	_rebuild_actor_picker()
 	_validate_payload()
@@ -157,7 +177,36 @@ func inspect_event(event: Dictionary) -> void:
 	start_spin.value = int(event.get("start_tick", 0))
 	end_spin.value = int(event.get("end_tick", 0))
 	payload_text.text = JSON.stringify(event.get("payload", {}), "\t")
+	payload_summary.text = _payload_summary(event)
 	_validate_payload()
+
+
+func _toggle_advanced() -> void:
+	advanced_container.visible = advanced_button.button_pressed
+	advanced_button.text = localization.text("hide_advanced") if advanced_container.visible else localization.text("show_advanced")
+
+
+func _payload_summary(event: Dictionary) -> String:
+	var payload: Dictionary = event.get("payload", {})
+	var event_type := String(event.get("type", ""))
+	if event_type in ["hitbox", "hurtbox"]:
+		var shape: Dictionary = payload.get("shape", {})
+		return localization.text("summary_shape", [String(payload.get("anchor", "root")), String(shape.get("kind", "shape")), _array_text(shape.get("offset", [])), _array_text(shape.get("size", []))])
+	if event_type == "motion":
+		return localization.text("summary_motion", [_array_text(payload.get("delta", [])), String(payload.get("space", "local"))])
+	if event_type == "animation":
+		return localization.text("summary_animation", [String(payload.get("clip", "—")), float(payload.get("speed", 1.0))])
+	if event_type == "window":
+		return localization.text("summary_window", [String(payload.get("kind", "window")), String(payload.get("tag", "—"))])
+	if event_type == "feel":
+		return localization.text("summary_feel", [String(payload.get("kind", "feel")), float(payload.get("strength", 1.0))])
+	return JSON.stringify(payload)
+
+
+func _array_text(value: Variant) -> String:
+	if value is Array:
+		return "[" + ", ".join(PackedStringArray((value as Array).map(func(item: Variant): return str(item)))) + "]"
+	return "—"
 
 
 func _apply_changes() -> void:

@@ -38,11 +38,9 @@ static func duplicate_take(source: Dictionary, existing_names: PackedStringArray
 static func first_difference_tick(first: Dictionary, second: Dictionary) -> int:
 	var first_duration := int(first.get("duration_ticks", 0))
 	var second_duration := int(second.get("duration_ticks", 0))
-	var first_boundaries := _semantic_boundaries(first)
-	var second_boundaries := _semantic_boundaries(second)
 	var max_tick := maxi(first_duration, second_duration)
 	for tick in range(max_tick + 1):
-		if first_boundaries.get(tick, []) != second_boundaries.get(tick, []):
+		if _semantic_state_at_tick(first, tick) != _semantic_state_at_tick(second, tick):
 			return tick
 	if first_duration != second_duration:
 		return mini(first_duration, second_duration)
@@ -53,31 +51,28 @@ static func fresh_id(prefix: String) -> String:
 	return "%s-%s-%s" % [prefix, Time.get_ticks_usec(), randi()]
 
 
-static func _semantic_boundaries(take: Dictionary) -> Dictionary:
-	var result := {}
+static func _semantic_state_at_tick(take: Dictionary, tick: int) -> Array:
+	var result: Array = []
 	var marker_targets := {}
 	for marker: Variant in take.get("markers", []):
 		if marker is Dictionary:
 			var marker_semantic := [marker.get("name", ""), marker.get("tick", 0)]
 			marker_targets[String(marker.get("id", ""))] = marker_semantic
-			_add_signature(result, int(marker.get("tick", 0)), ["marker", marker_semantic])
+			if int(marker.get("tick", 0)) == tick:
+				result.append(["marker", marker_semantic])
 	for branch: Variant in take.get("branches", []):
-		if branch is Dictionary:
+		if branch is Dictionary and int(branch.get("at_tick", 0)) == tick:
 			var target_id := String(branch.get("target_marker", ""))
-			_add_signature(result, int(branch.get("at_tick", 0)), ["branch", branch.get("condition", {}), marker_targets.get(target_id, ["missing", target_id])])
+			result.append(["branch", branch.get("condition", {}), marker_targets.get(target_id, ["missing", target_id])])
 	for track: Variant in take.get("tracks", []):
 		if not track is Dictionary:
 			continue
 		for event: Variant in track.get("events", []):
 			if event is Dictionary:
-				_add_signature(result, int(event.get("start_tick", 0)), ["start", track.get("kind", ""), event.get("type", ""), event.get("actor_id", ""), event.get("end_tick", 0), event.get("payload", {})])
-				_add_signature(result, int(event.get("end_tick", 0)), ["end", track.get("kind", ""), event.get("type", ""), event.get("actor_id", "")])
-	for tick: Variant in result.keys():
-		result[tick].sort_custom(func(a: Variant, b: Variant): return JSON.stringify(a) < JSON.stringify(b))
+				var start_tick := int(event.get("start_tick", 0))
+				var end_tick := int(event.get("end_tick", start_tick))
+				var is_point_event := start_tick == end_tick
+				if (is_point_event and tick == start_tick) or (not is_point_event and tick >= start_tick and tick < end_tick):
+					result.append([track.get("kind", ""), event.get("type", ""), event.get("actor_id", ""), event.get("payload", {})])
+	result.sort_custom(func(a: Variant, b: Variant): return JSON.stringify(a) < JSON.stringify(b))
 	return result
-
-
-static func _add_signature(result: Dictionary, tick: int, value: Array) -> void:
-	if not result.has(tick):
-		result[tick] = []
-	result[tick].append(value)

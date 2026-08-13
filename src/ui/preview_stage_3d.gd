@@ -7,8 +7,9 @@ var current_tick := 0
 var viewport_3d: SubViewport
 var world_root: Node3D
 var performer: MeshInstance3D
-var target: MeshInstance3D
+var target: Node3D
 var hitbox: MeshInstance3D
+var hitbox_outline: MeshInstance3D
 var camera: Camera3D
 var _events: Array[Dictionary] = []
 var _base_position := Vector3(-1.5, 0.8, 1.2)
@@ -102,6 +103,7 @@ func set_tick(tick: int) -> void:
 		return
 	performer.position = _base_position
 	hitbox.visible = false
+	hitbox_outline.visible = false
 	for event: Dictionary in _events:
 		var start := int(event.get("start_tick", 0))
 		var finish := int(event.get("end_tick", start))
@@ -111,11 +113,14 @@ func set_tick(tick: int) -> void:
 				performer.position += Vector3(float(delta[0]), float(delta[1]), float(delta[2]))
 		if event.get("type") == "hitbox" and start <= tick and tick <= finish:
 			hitbox.visible = true
+			hitbox_outline.visible = true
 			var shape: Dictionary = event.get("payload", {}).get("shape", {})
 			var offset: Array = shape.get("offset", [0, 1, -0.8])
 			var dimensions: Array = shape.get("size", [1, 1, 1])
 			hitbox.position = performer.position + Vector3(float(offset[0]), float(offset[1]), float(offset[2]))
 			hitbox.scale = Vector3(float(dimensions[0]), float(dimensions[1]), float(dimensions[2]))
+			hitbox_outline.position = hitbox.position
+			hitbox_outline.scale = hitbox.scale
 	if imported_model != null and is_instance_valid(imported_model):
 		imported_model.position = performer.position
 	_sync_imported_animation(tick)
@@ -143,7 +148,7 @@ func bind_project_assets(asset_root: String) -> void:
 			imported_model = loaded.scene
 			performer.visible = int(loaded.metadata.get("mesh_count", 0)) == 0
 			imported_model.position = _base_position
-			imported_model.scale = Vector3.ONE * 1.22
+			imported_model.scale = Vector3.ONE * 0.78
 			world_root.add_child(imported_model)
 			_collect_animation_players(imported_model)
 			set_tick(current_tick)
@@ -254,29 +259,94 @@ func _build_world() -> void:
 	performer.position = _base_position
 	performer.material_override = _material(Color("62d7a3"))
 	world_root.add_child(performer)
-	target = MeshInstance3D.new()
-	var target_mesh := CapsuleMesh.new()
-	target_mesh.radius = 0.5
-	target_mesh.height = 1.7
-	target.mesh = target_mesh
-	target.position = Vector3(0, 0.85, -3.0)
-	target.material_override = _material(Color("f3b85b"))
+	target = _build_training_dummy_3d()
+	target.position = Vector3(0, 0, -3.0)
+	target.scale = Vector3.ONE * 1.18
 	world_root.add_child(target)
 	hitbox = MeshInstance3D.new()
 	hitbox.mesh = BoxMesh.new()
-	var hitbox_material := _material(Color(1.0, 0.18, 0.24, 0.35))
+	var hitbox_material := _material(Color(1.0, 0.18, 0.24, 0.16))
 	hitbox_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	hitbox_material.emission_enabled = true
 	hitbox_material.emission = Color("ff3347")
-	hitbox_material.emission_energy_multiplier = 1.8
+	hitbox_material.emission_energy_multiplier = 0.55
 	hitbox.material_override = hitbox_material
 	hitbox.visible = false
 	world_root.add_child(hitbox)
+	hitbox_outline = _build_hitbox_outline()
+	hitbox_outline.visible = false
+	world_root.add_child(hitbox_outline)
 	camera = Camera3D.new()
-	camera.position = Vector3(7.2, 4.6, 8.2)
-	camera.fov = 50.0
-	camera.look_at_from_position(camera.position, Vector3(-0.2, 1.55, -1.2))
+	camera.position = Vector3(6.25, 3.7, 6.65)
+	camera.fov = 48.0
+	camera.look_at_from_position(camera.position, Vector3(-0.25, 1.15, -1.25))
 	world_root.add_child(camera)
+
+
+func _build_training_dummy_3d() -> Node3D:
+	var dummy := Node3D.new()
+	var armor := Color("6f5531")
+	var edge := Color("f3b85b")
+	var dark := Color("161b24")
+	var base_mesh := CylinderMesh.new()
+	base_mesh.top_radius = 0.58
+	base_mesh.bottom_radius = 0.72
+	base_mesh.height = 0.16
+	dummy.add_child(_mesh_part(base_mesh, Vector3(0, 0.08, 0), dark))
+	var post_mesh := CylinderMesh.new()
+	post_mesh.top_radius = 0.1
+	post_mesh.bottom_radius = 0.12
+	post_mesh.height = 1.35
+	dummy.add_child(_mesh_part(post_mesh, Vector3(0, 0.76, 0), armor))
+	var torso_mesh := BoxMesh.new()
+	torso_mesh.size = Vector3(0.9, 0.82, 0.46)
+	dummy.add_child(_mesh_part(torso_mesh, Vector3(0, 1.2, 0), armor))
+	var chest_mesh := BoxMesh.new()
+	chest_mesh.size = Vector3(0.62, 0.16, 0.5)
+	dummy.add_child(_mesh_part(chest_mesh, Vector3(0, 1.28, -0.04), edge))
+	var head_mesh := SphereMesh.new()
+	head_mesh.radius = 0.25
+	head_mesh.height = 0.5
+	dummy.add_child(_mesh_part(head_mesh, Vector3(0, 1.87, 0), dark))
+	var head_ring := TorusMesh.new()
+	head_ring.inner_radius = 0.26
+	head_ring.outer_radius = 0.31
+	head_ring.rings = 16
+	head_ring.ring_segments = 8
+	var ring_part := _mesh_part(head_ring, Vector3(0, 1.87, 0), edge)
+	ring_part.rotation_degrees.x = 90
+	dummy.add_child(ring_part)
+	return dummy
+
+
+func _mesh_part(mesh: Mesh, position: Vector3, color: Color) -> MeshInstance3D:
+	var part := MeshInstance3D.new()
+	part.mesh = mesh
+	part.position = position
+	part.material_override = _material(color)
+	return part
+
+
+func _build_hitbox_outline() -> MeshInstance3D:
+	var outline := MeshInstance3D.new()
+	var mesh := ImmediateMesh.new()
+	var material := StandardMaterial3D.new()
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	material.albedo_color = Color("ff6a75")
+	material.emission_enabled = true
+	material.emission = Color("ff3d50")
+	var corners := [
+		Vector3(-0.5, -0.5, -0.5), Vector3(0.5, -0.5, -0.5), Vector3(0.5, 0.5, -0.5), Vector3(-0.5, 0.5, -0.5),
+		Vector3(-0.5, -0.5, 0.5), Vector3(0.5, -0.5, 0.5), Vector3(0.5, 0.5, 0.5), Vector3(-0.5, 0.5, 0.5),
+	]
+	var edges := [[0, 1], [1, 2], [2, 3], [3, 0], [4, 5], [5, 6], [6, 7], [7, 4], [0, 4], [1, 5], [2, 6], [3, 7]]
+	mesh.surface_begin(Mesh.PRIMITIVE_LINES, material)
+	for edge_pair: Array in edges:
+		mesh.surface_add_vertex(corners[edge_pair[0]])
+		mesh.surface_add_vertex(corners[edge_pair[1]])
+	mesh.surface_end()
+	outline.mesh = mesh
+	return outline
 
 
 func _add_stage_marker(position: Vector3, color: Color) -> void:

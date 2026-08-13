@@ -43,6 +43,16 @@ var timeline_selection_label: Label
 var play_button: Button
 var compare_button: Button
 var difference_button: Button
+var duplicate_take_button: Button
+var showcase_button: Button
+var comparison_detail_label: Label
+var left_panel_container: Control
+var inspector_panel_container: Control
+var timeline_toolbar_container: Control
+var command_row_container: Control
+var top_bar_container: Control
+var take_tabs_separator: Control
+var showcase_mode := false
 var delete_event_button: Button
 var delete_track_button: Button
 var file_dialog: FileDialog
@@ -147,18 +157,21 @@ func _build_interface() -> void:
 	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	root.add_theme_constant_override("separation", 0)
 	add_child(root)
-	root.add_child(_build_top_bar())
+	top_bar_container = _build_top_bar()
+	root.add_child(top_bar_container)
 	var main_split := HSplitContainer.new()
 	main_split.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	main_split.split_offset = 250
 	root.add_child(main_split)
-	main_split.add_child(_build_left_panel())
+	left_panel_container = _build_left_panel()
+	main_split.add_child(left_panel_container)
 	var center_right := HSplitContainer.new()
 	center_right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	center_right.split_offset = -310
 	main_split.add_child(center_right)
 	center_right.add_child(_build_center())
-	center_right.add_child(_build_inspector())
+	inspector_panel_container = _build_inspector()
+	center_right.add_child(inspector_panel_container)
 	root.add_child(_build_status_bar())
 	_build_dialogs()
 
@@ -194,6 +207,9 @@ func _build_top_bar() -> Control:
 	workspace_context_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	workspace_context_label.add_theme_color_override("font_color", Color("aeb7c6"))
 	identity_row.add_child(workspace_context_label)
+	showcase_button = _localized_button("showcase", _toggle_showcase, "tip_showcase")
+	showcase_button.theme_type_variation = "CompareButton"
+	identity_row.add_child(showcase_button)
 	identity_row.add_child(_localized_button("tutorial", _show_tutorial_center, "tip_tutorial"))
 	language_picker = OptionButton.new()
 	language_picker.custom_minimum_size.x = 116
@@ -206,34 +222,56 @@ func _build_top_bar() -> Control:
 	language_picker.item_selected.connect(_on_language_selected)
 	identity_row.add_child(language_picker)
 	var command_row := HBoxContainer.new()
-	command_row.custom_minimum_size.y = 42
-	command_row.add_theme_constant_override("separation", 6)
+	command_row_container = command_row
+	command_row.custom_minimum_size.y = 46
+	command_row.add_theme_constant_override("separation", 10)
 	stack.add_child(command_row)
-	command_row.add_child(_localized_button("open", _show_open_dialog, "tip_open"))
-	command_row.add_child(_localized_button("import", _show_asset_dialog, "tip_import"))
-	command_row.add_child(_localized_button("save", _save_project, "tip_save"))
+	var project_controls: Array[Control] = [
+		_localized_button("open", _show_open_dialog, "tip_open"),
+		_localized_button("import", _show_asset_dialog, "tip_import"),
+		_localized_button("save", _save_project, "tip_save"),
+	]
 	var export_button := _localized_button("export", _show_export_dialog, "tip_export")
 	export_button.theme_type_variation = "PrimaryButton"
-	command_row.add_child(export_button)
-	command_row.add_child(_localized_button("recover", _recover_autosave, "tip_recover"))
-	command_row.add_child(_v_separator())
-	command_row.add_child(_localized_button("undo", undo_redo.undo, "tip_undo"))
-	command_row.add_child(_localized_button("redo", undo_redo.redo, "tip_redo"))
+	project_controls.append(export_button)
+	project_controls.append(_localized_button("recover", _recover_autosave, "tip_recover"))
+	command_row.add_child(_toolbar_group("group_project", project_controls))
+	command_row.add_child(_toolbar_group("group_history", [
+		_localized_button("undo", undo_redo.undo, "tip_undo"),
+		_localized_button("redo", undo_redo.redo, "tip_redo"),
+	]))
 	command_row.add_spacer(false)
-	command_row.add_child(_localized_button("step_back", func(): _set_tick(current_tick - 1), "tip_step_back"))
+	var transport_controls: Array[Control] = [_localized_button("step_back", func(): _set_tick(current_tick - 1), "tip_step_back")]
 	play_button = _localized_button("play", _toggle_playback, "tip_play")
 	play_button.theme_type_variation = "TransportButton"
 	play_button.custom_minimum_size.x = 78
-	command_row.add_child(play_button)
-	command_row.add_child(_localized_button("step_forward", func(): _set_tick(current_tick + 1), "tip_step_forward"))
-	command_row.add_child(_localized_button("reset", func(): _set_tick(0), "tip_reset"))
-	command_row.add_child(_v_separator())
+	transport_controls.append(play_button)
+	transport_controls.append(_localized_button("step_forward", func(): _set_tick(current_tick + 1), "tip_step_forward"))
+	transport_controls.append(_localized_button("reset", func(): _set_tick(0), "tip_reset"))
+	command_row.add_child(_toolbar_group("group_transport", transport_controls))
 	compare_button = _localized_button("compare_on", _toggle_compare, "tip_compare_on")
 	compare_button.toggle_mode = true
 	compare_button.button_pressed = true
 	compare_button.theme_type_variation = "CompareButton"
-	command_row.add_child(compare_button)
+	command_row.add_child(_toolbar_group("group_compare", [compare_button]))
 	return bar
+
+
+func _toolbar_group(label_key: String, controls: Array[Control]) -> Control:
+	var group := VBoxContainer.new()
+	group.add_theme_constant_override("separation", 1)
+	var label := Label.new()
+	label.text = localization.text(label_key)
+	label.add_theme_font_size_override("font_size", 9)
+	label.add_theme_color_override("font_color", Color("717d90"))
+	localized_controls[label_key] = label
+	group.add_child(label)
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 4)
+	for control in controls:
+		row.add_child(control)
+	group.add_child(row)
+	return group
 
 
 func _build_left_panel() -> Control:
@@ -295,6 +333,8 @@ func _build_center() -> Control:
 	var upper := VBoxContainer.new()
 	upper.add_theme_constant_override("separation", 6)
 	vertical.add_child(upper)
+	var take_header_stack := VBoxContainer.new()
+	take_header_stack.add_theme_constant_override("separation", 3)
 	var take_row := HBoxContainer.new()
 	var rehearsal_label := Label.new()
 	rehearsal_label.text = localization.text("rehearsal")
@@ -302,7 +342,8 @@ func _build_center() -> Control:
 	rehearsal_label.add_theme_font_size_override("font_size", 12)
 	rehearsal_label.add_theme_color_override("font_color", Color("aeb7c6"))
 	take_row.add_child(rehearsal_label)
-	take_row.add_child(_v_separator())
+	take_tabs_separator = _v_separator()
+	take_row.add_child(take_tabs_separator)
 	take_tabs = TabBar.new()
 	take_tabs.custom_minimum_size.x = 210
 	take_tabs.tab_changed.connect(_on_take_tab_changed)
@@ -317,9 +358,15 @@ func _build_center() -> Control:
 	difference_button = _localized_button("jump_to_difference", _jump_to_first_difference, "tip_jump_to_difference")
 	difference_button.disabled = true
 	take_row.add_child(difference_button)
-	var duplicate_button := _localized_button("duplicate_take", _duplicate_current_take, "tip_duplicate_take")
-	take_row.add_child(duplicate_button)
-	upper.add_child(take_row)
+	duplicate_take_button = _localized_button("duplicate_take", _duplicate_current_take, "tip_duplicate_take")
+	take_row.add_child(duplicate_take_button)
+	take_header_stack.add_child(take_row)
+	comparison_detail_label = Label.new()
+	comparison_detail_label.add_theme_font_size_override("font_size", 12)
+	comparison_detail_label.add_theme_color_override("font_color", Color("62d7a3"))
+	comparison_detail_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	take_header_stack.add_child(comparison_detail_label)
+	upper.add_child(take_header_stack)
 	var stage_split := HSplitContainer.new()
 	stage_split.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	stage_split.split_offset = 0
@@ -335,7 +382,8 @@ func _build_center() -> Control:
 	var timeline_area := VBoxContainer.new()
 	timeline_area.add_theme_constant_override("separation", 0)
 	vertical.add_child(timeline_area)
-	timeline_area.add_child(_build_timeline_toolbar())
+	timeline_toolbar_container = _build_timeline_toolbar()
+	timeline_area.add_child(timeline_toolbar_container)
 	var timeline_scroll := ScrollContainer.new()
 	timeline_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	timeline_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
@@ -651,6 +699,33 @@ func _toggle_compare() -> void:
 	_update_comparison_summary()
 
 
+func _toggle_showcase() -> void:
+	set_showcase_mode(not showcase_mode)
+
+
+func set_showcase_mode(enabled: bool) -> void:
+	showcase_mode = enabled
+	if left_panel_container != null:
+		left_panel_container.visible = not enabled
+	if inspector_panel_container != null:
+		inspector_panel_container.visible = not enabled
+	if timeline_toolbar_container != null:
+		timeline_toolbar_container.visible = not enabled
+	if command_row_container != null:
+		command_row_container.visible = not enabled
+	if top_bar_container != null:
+		top_bar_container.custom_minimum_size.y = 46 if enabled else 94
+	if take_tabs != null:
+		take_tabs.visible = not enabled
+	if take_tabs_separator != null:
+		take_tabs_separator.visible = not enabled
+	if duplicate_take_button != null:
+		duplicate_take_button.visible = not enabled
+	if showcase_button != null:
+		showcase_button.text = localization.text("exit_showcase") if enabled else localization.text("showcase")
+	_set_status(localization.text("showcase_enabled") if enabled else localization.text("showcase_disabled"))
+
+
 func _on_take_tab_changed(index: int) -> void:
 	if spec == null:
 		return
@@ -677,8 +752,40 @@ func _update_comparison_summary() -> void:
 	var delta := spec.get_duration_ticks(compare_take_name) - spec.get_duration_ticks(current_take_name)
 	var difference_text := localization.text("tick_value", [first_difference]) if first_difference >= 0 else localization.text("none")
 	comparison_label.text = localization.text("first_difference", [current_take_name, compare_take_name, difference_text, delta]) if compare_enabled and current_take_name != compare_take_name else localization.text("no_comparison")
+	if comparison_detail_label != null:
+		comparison_detail_label.text = _comparison_detail() if compare_enabled and current_take_name != compare_take_name else ""
 	if difference_button != null:
 		difference_button.disabled = not compare_enabled or current_take_name == compare_take_name or first_difference < 0
+
+
+func _comparison_detail() -> String:
+	var primary_take := spec.get_take(current_take_name)
+	var secondary_take := spec.get_take(compare_take_name)
+	var primary_contact := _marker_tick(primary_take, "contact")
+	var secondary_contact := _marker_tick(secondary_take, "contact")
+	var contact_delta := primary_contact - secondary_contact
+	var primary_active := _event_span(primary_take, "window", "active")
+	var secondary_active := _event_span(secondary_take, "window", "active")
+	if primary_contact >= 0 and secondary_contact >= 0:
+		return localization.text("comparison_detail", [compare_take_name, abs(contact_delta), primary_active, secondary_active])
+	return localization.text("comparison_detail_generic")
+
+
+func _marker_tick(take: Dictionary, marker_name: String) -> int:
+	for marker: Variant in take.get("markers", []):
+		if marker is Dictionary and String(marker.get("name", "")).to_lower() == marker_name:
+			return int(marker.get("tick", -1))
+	return -1
+
+
+func _event_span(take: Dictionary, event_type: String, payload_kind: String) -> String:
+	for track: Variant in take.get("tracks", []):
+		if not track is Dictionary:
+			continue
+		for event: Variant in track.get("events", []):
+			if event is Dictionary and String(event.get("type", "")) == event_type and String(event.get("payload", {}).get("kind", "")) == payload_kind:
+				return "%d–%d" % [int(event.get("start_tick", 0)), int(event.get("end_tick", 0))]
+	return "—"
 
 
 func _jump_to_first_difference() -> void:
@@ -1211,6 +1318,8 @@ func _apply_locale() -> void:
 			control.tooltip_text = localization.text(key)
 	if compare_button != null:
 		compare_button.text = localization.text("compare_on") if compare_enabled else localization.text("compare_off")
+	if showcase_button != null:
+		showcase_button.text = localization.text("exit_showcase") if showcase_mode else localization.text("showcase")
 	if play_button != null:
 		play_button.text = localization.text("pause") if is_playing else localization.text("play")
 	if language_picker != null:

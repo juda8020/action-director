@@ -110,7 +110,7 @@ func _test_player_event_order() -> void:
 	player.play(loaded.spec, "Take B")
 	while player.is_active:
 		player.advance_one_tick()
-	_expect(observed == ["b-anim", "b-startup", "b-lunge", "b-whoosh", "b-active", "b-hitbox", "b-hit-stop", "b-shake", "b-spark", "b-recovery", "b-cancel"], "Runtime event order must be stable by tick and track order.")
+	_expect(observed == ["b-anim", "b-startup", "b-active", "b-hitbox", "b-lunge", "b-whoosh", "b-hit-stop", "b-shake", "b-spark", "b-recovery", "b-cancel"], "Runtime event order must be stable by tick and track order.")
 	player.queue_free()
 
 
@@ -248,6 +248,11 @@ func _test_duplicate_semantic_equivalence() -> void:
 	var source: Dictionary = loaded.spec.get_take("Take B")
 	var duplicate: Dictionary = TakeUtils.duplicate_take(source, loaded.spec.get_take_names())
 	_expect(TakeUtils.first_difference_tick(source, duplicate) == -1, "Regenerated take/track/event/marker/branch IDs must not create a semantic A/B difference.")
+	var sword_result: Dictionary = ActionSpecCodec.load_json("res://samples/actions/sword_strike.action.json")
+	_expect(bool(sword_result.get("ok", false)), "The 2D A/B sample must validate.")
+	if bool(sword_result.get("ok", false)):
+		var sword_spec: ActionSpec = sword_result.spec
+		_expect(TakeUtils.first_difference_tick(sword_spec.get_take("Take A"), sword_spec.get_take("Take B")) == 16, "The 2D sample must first diverge when Take B enters its active window at tick 16.")
 
 
 func _test_localization_catalog() -> void:
@@ -526,7 +531,7 @@ func _test_take_switch_rebinds_inspector_duration() -> void:
 	app.inspector.set_spec(app.spec, app.current_take_name)
 	_expect(int(app.inspector.end_spin.max_value) == 72, "Opening Take A must bind Inspector timing to its 72-tick duration.")
 	app._on_take_tab_changed(1)
-	_expect(app.current_take_name == "Take B" and int(app.inspector.start_spin.max_value) == 60 and int(app.inspector.end_spin.max_value) == 60, "Switching to Take B must rebind Inspector timing to its 60-tick duration.")
+	_expect(app.current_take_name == "Take B" and int(app.inspector.start_spin.max_value) == 72 and int(app.inspector.end_spin.max_value) == 72, "Switching to Take B must rebind Inspector timing to its 72-tick duration.")
 	app.undo_redo.free()
 	app.undo_redo = null
 	app.free()
