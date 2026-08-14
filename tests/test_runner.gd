@@ -224,6 +224,13 @@ func _test_semantic_comparison() -> void:
 	second = first.duplicate(true)
 	second.tracks[0].events[0].actor_id = "other"
 	_expect(TakeUtils.first_difference_tick(first, second) == 2, "Actor assignment changes must appear in first-difference results.")
+	first = _minimal_action().takes[0]
+	first.tracks[0].kind = "window"
+	first.tracks[0].events[0] = {"id": "startup-a", "type": "window", "start_tick": 2, "end_tick": 6, "actor_id": "hero", "payload": {"kind": "startup"}}
+	second = first.duplicate(true)
+	second.tracks[0].events[0].id = "startup-b"
+	second.tracks[0].events[0].end_tick = 4
+	_expect(TakeUtils.first_difference_tick(first, second) == 4, "Events with the same start and payload must first differ when the shorter interval ends, not when both begin.")
 
 
 func _test_branch_skip_closes_cancel_window() -> void:

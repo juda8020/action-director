@@ -70,7 +70,7 @@ static func _semantic_boundaries(take: Dictionary) -> Dictionary:
 			continue
 		for event: Variant in track.get("events", []):
 			if event is Dictionary:
-				_add_signature(result, int(event.get("start_tick", 0)), ["start", track.get("kind", ""), event.get("type", ""), event.get("actor_id", ""), event.get("end_tick", 0), event.get("payload", {})])
+				_add_signature(result, int(event.get("start_tick", 0)), ["start", track.get("kind", ""), event.get("type", ""), event.get("actor_id", ""), event.get("payload", {})])
 				_add_signature(result, int(event.get("end_tick", 0)), ["end", track.get("kind", ""), event.get("type", ""), event.get("actor_id", "")])
 	for tick: Variant in result.keys():
 		result[tick].sort_custom(func(a: Variant, b: Variant): return JSON.stringify(a) < JSON.stringify(b))
