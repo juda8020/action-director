@@ -202,12 +202,25 @@ func _resolve_clip(player: AnimationPlayer, requested: String) -> String:
 	var requested_lower := requested.to_lower()
 	for candidate: StringName in player.get_animation_list():
 		var name := String(candidate)
+		if name != "RESET" and requested_lower != "" and _has_clip_suffix(name.to_lower(), requested_lower):
+			return name
+	for candidate: StringName in player.get_animation_list():
+		var name := String(candidate)
 		if name != "RESET" and requested_lower != "" and (name.to_lower().contains(requested_lower) or requested_lower.contains(name.to_lower())):
 			return name
 	for candidate: StringName in player.get_animation_list():
 		if String(candidate) != "RESET":
 			return String(candidate)
 	return ""
+
+
+func _has_clip_suffix(candidate_lower: String, requested_lower: String) -> bool:
+	if candidate_lower == requested_lower:
+		return true
+	for separator: String in ["|", ":", "/", "\\", "_", "-", ".", " "]:
+		if candidate_lower.ends_with(separator + requested_lower):
+			return true
+	return false
 
 
 func _build_world() -> void:

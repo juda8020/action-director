@@ -288,12 +288,19 @@ func _test_mixamo_import_contract() -> void:
 
 func _test_3d_clip_resolution() -> void:
 	var stage := PreviewStage3D.new()
+	var ambiguous_player := AnimationPlayer.new()
+	var ambiguous_library := AnimationLibrary.new()
+	ambiguous_library.add_animation("HumanArmature|A_RunningJump", Animation.new())
+	ambiguous_library.add_animation("HumanArmature|Man_Run", Animation.new())
+	ambiguous_player.add_animation_library("", ambiguous_library)
+	_expect(stage._resolve_clip(ambiguous_player, "Run") == "HumanArmature|Man_Run", "3D preview must prefer an exact imported clip suffix over an earlier fuzzy match.")
 	var player := AnimationPlayer.new()
 	var library := AnimationLibrary.new()
 	library.add_animation("mixamo.com", Animation.new())
 	player.add_animation_library("", library)
 	_expect(stage._resolve_clip(player, "charge") == "mixamo.com", "3D preview must fall back to the first imported Mixamo clip when the authored alias is not present.")
 	_expect(stage._resolve_clip(player, "mixamo") == "mixamo.com", "3D preview must resolve a partial Mixamo clip name.")
+	ambiguous_player.free()
 	player.free()
 	stage.free()
 
