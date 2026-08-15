@@ -115,6 +115,25 @@ func _test_player_event_order() -> void:
 
 
 func _test_miss_fallback() -> void:
+	var raw := _minimal_action()
+	raw.takes[0].duration_ticks = 12
+	raw.takes[0].markers = [{"id": "after-miss", "name": "After Miss", "tick": 10}]
+	raw.takes[0].branches = [
+		{"id": "premature-miss", "at_tick": 1, "condition": {"kind": "miss"}, "target_marker": "after-miss"},
+		{"id": "confirmed-miss", "at_tick": 5, "condition": {"kind": "miss"}, "target_marker": "after-miss"},
+	]
+	raw.takes[0].tracks[0].events = [{"id": "test-hitbox", "type": "hitbox", "start_tick": 2, "end_tick": 4, "payload": {"shape": {"kind": "rect"}}}]
+	var staged_player := ActionDirectorPlayer.new()
+	get_root().add_child(staged_player)
+	var branches: Array[String] = []
+	staged_player.branch_taken.connect(func(id: String, _target: String): branches.append(id))
+	staged_player.play(ActionSpecCodec.from_dictionary(raw), "Default")
+	staged_player.advance_one_tick()
+	_expect(branches.is_empty() and staged_player.current_tick == 1, "A miss branch must not run before a hitbox closes without an outcome.")
+	while staged_player.current_tick < 5:
+		staged_player.advance_one_tick()
+	_expect(branches == ["confirmed-miss"], "A miss branch must run after the hitbox closes and records the fallback outcome.")
+	staged_player.queue_free()
 	var loaded := ActionSpecCodec.load_json("res://samples/actions/sword_strike.action.json")
 	var player := ActionDirectorPlayer.new()
 	get_root().add_child(player)

@@ -251,7 +251,7 @@ func _condition_matches(condition: Dictionary) -> bool:
 	var expected: Variant = condition.get("value", true)
 	match kind:
 		"hit", "block", "miss":
-			return String(context.get("last_outcome", "miss")) == kind
+			return context.has("last_outcome") and String(context.last_outcome) == kind
 		"grounded":
 			return bool(context.get("grounded", false)) == bool(expected)
 		"airborne":
