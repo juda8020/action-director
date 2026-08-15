@@ -512,6 +512,17 @@ func _test_ui_hierarchy_states() -> void:
 	var original_width := app.timeline.custom_minimum_size.x
 	app.timeline.zoom(4.0)
 	_expect(app.timeline.custom_minimum_size.x > original_width, "Timeline zoom must expand the scrollable canvas instead of clipping the later ticks.")
+	var original_track_id := String(first_track.id)
+	var changed_event := first_event.duplicate(true)
+	changed_event.type = "note"
+	changed_event.end_tick = changed_event.start_tick
+	changed_event.payload = {"text": "Review this timing"}
+	app._on_event_changed(changed_event)
+	_expect(app.selected_track_id != original_track_id and String(app._find_track(app.selected_track_id).get("kind", "")) == "note", "Changing an event type must move it to a compatible semantic track.")
+	app.undo_redo.undo()
+	_expect(app.selected_track_id == original_track_id and String(app._find_event(String(first_event.id)).get("type", "")) == String(first_event.type), "Undoing an event type change must restore its original track and type.")
+	app.undo_redo.redo()
+	_expect(String(app._find_track(app.selected_track_id).get("kind", "")) == "note", "Redoing an event type change must restore the compatible destination track.")
 	app.undo_redo.free()
 	app.undo_redo = null
 	app.free()

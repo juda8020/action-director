@@ -105,6 +105,55 @@ static func remove_track(action_data: Dictionary, take_name: String, track_id: S
 	return {"ok": false, "error": "Track not found: %s" % track_id}
 
 
+static func replace_event(action_data: Dictionary, take_name: String, replacement: Dictionary) -> Dictionary:
+	var event_type := String(replacement.get("type", ""))
+	if event_type not in EVENT_TYPES:
+		return {"ok": false, "error": "Unsupported event type: %s" % event_type}
+	var updated := action_data.duplicate(true)
+	var take := _find_take(updated, take_name)
+	if take.is_empty():
+		return {"ok": false, "error": "Take not found: %s" % take_name}
+	var event_id := String(replacement.get("id", ""))
+	var source_track: Dictionary = {}
+	var source_index := -1
+	for track: Variant in take.get("tracks", []):
+		if not track is Dictionary:
+			continue
+		var events: Array = track.get("events", [])
+		for index in events.size():
+			if events[index] is Dictionary and String(events[index].get("id", "")) == event_id:
+				source_track = track
+				source_index = index
+				break
+		if source_index >= 0:
+			break
+	if source_index < 0:
+		return {"ok": false, "error": "Event not found: %s" % event_id}
+	if _track_accepts_event(String(source_track.get("kind", "")), event_type):
+		var source_events: Array = source_track.get("events", [])
+		source_events[source_index] = replacement.duplicate(true)
+		source_track["events"] = source_events
+		return {"ok": true, "data": updated, "track_id": String(source_track.get("id", ""))}
+	var source_events: Array = source_track.get("events", [])
+	source_events.remove_at(source_index)
+	source_track["events"] = source_events
+	var destination := _find_compatible_track(take, "", event_type)
+	if destination.is_empty():
+		destination = {
+			"id": ActionTakeUtils.fresh_id("track"),
+			"name": TRACK_NAMES.get(event_type, event_type.capitalize()),
+			"kind": event_type,
+			"events": [],
+		}
+		var tracks: Array = take.get("tracks", [])
+		tracks.append(destination)
+		take["tracks"] = tracks
+	var destination_events: Array = destination.get("events", [])
+	destination_events.append(replacement.duplicate(true))
+	destination["events"] = destination_events
+	return {"ok": true, "data": updated, "track_id": String(destination.get("id", ""))}
+
+
 static func make_event(event_type: String, start_tick: int, take_duration: int, dimension: String, actor_id: String = "") -> Dictionary:
 	var span := 0 if event_type in ["audio", "game_event", "note"] else 5
 	if event_type == "animation":

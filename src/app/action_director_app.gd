@@ -904,24 +904,19 @@ func _find_event(event_id: String) -> Dictionary:
 
 
 func _replace_event(replacement: Dictionary) -> void:
-	for take: Variant in spec.data.get("takes", []):
-		if take is Dictionary and String(take.get("name", "")) == current_take_name:
-			for track: Variant in take.get("tracks", []):
-				if track is Dictionary:
-					var events: Array = track.get("events", [])
-					for index in events.size():
-						if String(events[index].get("id", "")) == String(replacement.get("id", "")):
-							events[index] = replacement.duplicate(true)
-							selected_track_id = String(track.get("id", ""))
-							selected_event_id = String(replacement.get("id", ""))
-							timeline.set_take(spec, current_take_name)
-							timeline.set_selection(selected_track_id, selected_event_id)
-							inspector.inspect_event(replacement)
-							_rebuild_stages()
-							_update_timeline_selection()
-							_update_comparison_summary()
-							_set_status(localization.text("event_updated", [replacement.get("id", "event")]))
-							return
+	var result := ActionAuthoringUtils.replace_event(spec.data, current_take_name, replacement)
+	if not result.ok:
+		return
+	spec.data = result.data
+	selected_track_id = String(result.track_id)
+	selected_event_id = String(replacement.get("id", ""))
+	timeline.set_take(spec, current_take_name)
+	timeline.set_selection(selected_track_id, selected_event_id)
+	inspector.inspect_event(replacement)
+	_rebuild_stages()
+	_update_timeline_selection()
+	_update_comparison_summary()
+	_set_status(localization.text("event_updated", [replacement.get("id", "event")]))
 
 
 func _on_tree_selected() -> void:
