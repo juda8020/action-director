@@ -117,8 +117,8 @@ func advance_one_tick() -> void:
 	current_tick += 1
 	var processing_tick := current_tick
 	_open_events_at_tick(processing_tick)
-	_evaluate_branches_at_tick(processing_tick)
 	_close_events_at_tick(processing_tick)
+	_evaluate_branches_at_tick(processing_tick)
 	playback_tick_changed.emit(current_tick)
 	if current_tick >= int(current_take.get("duration_ticks", 0)):
 		var finished_action := current_spec.action_id

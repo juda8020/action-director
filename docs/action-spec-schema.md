@@ -46,6 +46,8 @@ the Alpha.
 - The target must be a marker later than the branch tick.
 - A branch never executes arbitrary code.
 - An unresolved hitbox automatically reports `miss` when the window closes.
+- A `miss` branch may run on that same closing tick. Runtime closes the hitbox and
+  records the fallback outcome before evaluating branches scheduled for the tick.
 
 ## Tick ranges
 

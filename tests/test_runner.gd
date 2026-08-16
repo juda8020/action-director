@@ -16,6 +16,7 @@ func _initialize() -> void:
 	_test_unknown_events_survive()
 	_test_player_event_order()
 	_test_miss_fallback()
+	_test_miss_branch_at_hitbox_end()
 	_test_branching()
 	_test_tres_cache()
 	_test_frame_rate_independence()
@@ -42,7 +43,7 @@ func _initialize() -> void:
 	_test_duplicate_take_undo_redo()
 	_test_take_switch_rebinds_inspector_duration()
 	if failures.is_empty():
-		print("Action Director tests passed: 32/32")
+		print("Action Director tests passed: 33/33")
 		quit(0)
 	else:
 		for failure in failures:
@@ -142,6 +143,23 @@ func _test_miss_fallback() -> void:
 	for tick in 27:
 		player.advance_one_tick()
 	_expect(player.context.get("last_outcome") == "miss", "A hitbox with no reported outcome must close as miss.")
+	player.queue_free()
+
+
+func _test_miss_branch_at_hitbox_end() -> void:
+	var raw := _minimal_action()
+	raw.takes[0].duration_ticks = 12
+	raw.takes[0].markers = [{"id": "after-miss", "name": "After Miss", "tick": 10}]
+	raw.takes[0].branches = [{"id": "miss-on-close", "at_tick": 4, "condition": {"kind": "miss"}, "target_marker": "after-miss"}]
+	raw.takes[0].tracks[0].events = [{"id": "test-hitbox", "type": "hitbox", "start_tick": 2, "end_tick": 4, "payload": {"shape": {"kind": "rect"}}}]
+	var player := ActionDirectorPlayer.new()
+	get_root().add_child(player)
+	var branches: Array[String] = []
+	player.branch_taken.connect(func(id: String, _target: String): branches.append(id))
+	player.play(ActionSpecCodec.from_dictionary(raw), "Default")
+	while player.current_tick < 4:
+		player.advance_one_tick()
+	_expect(branches == ["miss-on-close"] and player.current_tick == 9, "A miss branch scheduled on a hitbox end tick must see the automatic miss outcome and stage its target marker.")
 	player.queue_free()
 
 

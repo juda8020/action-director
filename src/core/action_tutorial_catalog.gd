@@ -42,7 +42,7 @@ const CONTENT := {
 		"branching": {"title": "Hit, block, miss, and branches", "summary": "Preview the result-driven path without turning the timeline into a programming language.", "time": "7 min", "action": "open_2d", "steps": [
 			["Create structure in JSON", "The Alpha can rehearse existing branches but cannot author them in the graphical interface. Add markers and forward branches in .action.json, then reopen it."],
 			["Reach the active hitbox", "Play or step until the red hitbox is visible."],
-			["Report a result", "Left-click the active hitbox for HIT; right-click for BLOCK. If no result arrives before it closes, runtime records MISS."],
+			["Report a result", "Left-click the active hitbox for HIT; right-click for BLOCK. If no result arrives before it closes, runtime records MISS before evaluating branches on that closing tick."],
 			["Follow the branch", "Branches execute only at their scheduled tick and move forward to a marker. The stage shows the branch ID and target marker."],
 			["Check cleanup", "Skipped hitboxes and cancel windows close before the branch jumps, keeping the editor and Godot runtime in the same state."],
 		]},
@@ -112,7 +112,7 @@ const CONTENT := {
 		"branching": {"title": "命中、格擋、落空與分支", "summary": "預演結果導向的路徑，但不把時間軸變成任意程式語言。", "time": "7 分鐘", "action": "open_2d", "steps": [
 			["先在 JSON 建立結構", "Alpha 能試打既有分支，但圖形介面還不能建立。請在 .action.json 新增 marker 與向後續前進的 branch，再重新開啟。"],
 			["走到有效攻擊框", "播放或逐格移動，直到紅色攻擊框出現。"],
-			["回報結果", "在有效攻擊框按左鍵回報命中、右鍵回報格擋；關閉前沒有結果時，Runtime 自動記為落空。"],
+			["回報結果", "在有效攻擊框按左鍵回報命中、右鍵回報格擋；關閉前沒有結果時，Runtime 會先自動記為落空，再判斷同一 tick 的分支。"],
 			["觀察分支", "分支只在排定 tick 執行，並向後續標記前進；舞台會顯示分支 ID 與目標標記。"],
 			["確認清理", "被跳過的攻擊框與取消窗口會在跳轉前關閉，確保編輯器與 Godot Runtime 狀態一致。"],
 		]},
@@ -182,7 +182,7 @@ const CONTENT := {
 		"branching": {"title": "ヒット、ガード、ミス、分岐", "summary": "任意コードを使わず、結果による経路をリハーサルします。", "time": "7分", "action": "open_2d", "steps": [
 			["JSONで構造を作る", "Alphaは既存Branchを再生できますがGUI作成は未対応です。.action.jsonへMarker／前進Branchを追加して再読込します。"],
 			["有効なヒットボックスへ", "赤いヒットボックスが出るまで再生またはコマ送りします。"],
-			["結果を報告", "左クリックでHIT、右クリックでBLOCK。閉じるまで報告がなければMISSになります。"],
+			["結果を報告", "左クリックでHIT、右クリックでBLOCK。閉じるまで報告がなければ、同じtickの分岐判定前にMISSになります。"],
 			["分岐を追う", "分岐は予定tickでのみ実行され、後方のマーカーへ進みます。ステージに分岐IDと対象が表示されます。"],
 			["クリーンアップ確認", "飛ばされるヒットボックスとキャンセル窓は移動前に閉じ、エディターとRuntimeの状態を一致させます。"],
 		]},
@@ -252,7 +252,7 @@ const CONTENT := {
 		"branching": {"title": "명중, 방어, 빗나감, 분기", "summary": "임의 코드 없이 결과 기반 경로를 리허설합니다.", "time": "7분", "action": "open_2d", "steps": [
 			["JSON에서 구조 만들기", "Alpha는 기존 Branch를 재생하지만 GUI 작성은 지원하지 않습니다. .action.json에 Marker와 앞으로 가는 Branch를 추가해 다시 엽니다."],
 			["활성 히트박스로 이동", "빨간 히트박스가 보일 때까지 재생하거나 한 tick씩 이동합니다."],
-			["결과 보고", "왼쪽 클릭은 HIT, 오른쪽 클릭은 BLOCK입니다. 닫힐 때까지 결과가 없으면 MISS가 됩니다."],
+			["결과 보고", "왼쪽 클릭은 HIT, 오른쪽 클릭은 BLOCK입니다. 닫힐 때까지 결과가 없으면 같은 tick의 분기를 판단하기 전에 MISS가 됩니다."],
 			["분기 확인", "분기는 예약 tick에만 실행되고 뒤쪽 마커로 이동합니다. 무대에 분기 ID와 대상이 표시됩니다."],
 			["정리 확인", "건너뛴 히트박스와 취소 창은 점프 전에 닫혀 편집기와 Runtime 상태를 맞춥니다."],
 		]},

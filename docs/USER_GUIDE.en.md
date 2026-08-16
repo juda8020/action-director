@@ -226,7 +226,7 @@ The built-in sword action provides an example, not a balance recommendation. Tak
 
 ## 11. Outcomes and forward branches
 
-During an active 2D hitbox, left-click reports `hit` and right-click reports `block`. If no result arrives before the hitbox closes, Runtime reports `miss`.
+During an active 2D hitbox, left-click reports `hit` and right-click reports `block`. If no result arrives before the hitbox closes, Runtime reports `miss` before evaluating branches scheduled for that closing tick.
 
 ```json
 {
