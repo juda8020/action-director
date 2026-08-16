@@ -64,15 +64,16 @@ static func import_asset(source_path: String, project_directory: String) -> Dict
 		return _failure("asset_not_found", [source_path], "Asset no longer exists: %s" % source_path)
 	var asset_directory := project_directory.path_join("assets")
 	DirAccess.make_dir_recursive_absolute(asset_directory)
-	var destination := asset_directory.path_join(source_path.get_file())
+	var destination_name := _available_asset_filename(asset_directory, source_path.get_file())
+	var destination := asset_directory.path_join(destination_name)
 	var copy_error := DirAccess.copy_absolute(source_path, destination)
 	if copy_error != OK:
 		return _failure("asset_copy_failed", [], "Could not copy the asset into the project.")
 	var asset := {
-		"id": source_path.get_file().get_basename().to_snake_case(),
+		"id": destination_name.get_basename().to_snake_case(),
 		"name": source_path.get_file().get_basename(),
 		"kind": _asset_kind(extension),
-		"path": "assets/%s" % source_path.get_file(),
+		"path": "assets/%s" % destination_name,
 		"source_extension": extension,
 	}
 	var warnings: Array[String] = []
@@ -97,6 +98,20 @@ static func import_asset(source_path: String, project_directory: String) -> Dict
 		"asset": asset,
 		"warnings": warnings,
 	}
+
+
+static func _available_asset_filename(asset_directory: String, source_filename: String) -> String:
+	if not FileAccess.file_exists(asset_directory.path_join(source_filename)):
+		return source_filename
+	var extension := source_filename.get_extension()
+	var basename := source_filename.get_basename()
+	var suffix := 2
+	while true:
+		var candidate := "%s_%d%s" % [basename, suffix, ".%s" % extension if extension != "" else ""]
+		if not FileAccess.file_exists(asset_directory.path_join(candidate)):
+			return candidate
+		suffix += 1
+	return source_filename
 
 
 static func _asset_kind(extension: String) -> String:

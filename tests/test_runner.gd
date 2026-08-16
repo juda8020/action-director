@@ -27,6 +27,7 @@ func _initialize() -> void:
 	_test_duplicate_semantic_equivalence()
 	_test_localization_catalog()
 	_test_mixamo_import_contract()
+	_test_asset_name_collision_protection()
 	_test_3d_clip_resolution()
 	_test_real_fbx_pipeline()
 	_test_bundled_fbx_demo()
@@ -41,7 +42,7 @@ func _initialize() -> void:
 	_test_duplicate_take_undo_redo()
 	_test_take_switch_rebinds_inspector_duration()
 	if failures.is_empty():
-		print("Action Director tests passed: 31/31")
+		print("Action Director tests passed: 32/32")
 		quit(0)
 	else:
 		for failure in failures:
@@ -303,6 +304,48 @@ func _test_mixamo_import_contract() -> void:
 	var metadata := ActionModelImporter.inspect_scene(synthetic)
 	_expect(metadata.skeleton_count == 1 and metadata.animation_clips == ["mixamo.com"] and metadata.mixamo_compatible, "Mixamo inspection must discover skeletons and non-RESET animation clips.")
 	synthetic.free()
+
+
+func _test_asset_name_collision_protection() -> void:
+	var fixture_root := OS.get_user_data_dir().path_join("asset-name-collision-%s" % Time.get_ticks_usec())
+	var source_a := fixture_root.path_join("source-a")
+	var source_b := fixture_root.path_join("source-b")
+	var project_root := fixture_root.path_join("project")
+	DirAccess.make_dir_recursive_absolute(source_a)
+	DirAccess.make_dir_recursive_absolute(source_b)
+	DirAccess.make_dir_recursive_absolute(project_root)
+	var first_source := source_a.path_join("shared.png")
+	var second_source := source_b.path_join("shared.png")
+	var first_file := FileAccess.open(first_source, FileAccess.WRITE)
+	first_file.store_string("first asset")
+	first_file.close()
+	var second_file := FileAccess.open(second_source, FileAccess.WRITE)
+	second_file.store_string("second asset")
+	second_file.close()
+	var first := ActionProjectStore.import_asset(first_source, project_root)
+	var second := ActionProjectStore.import_asset(second_source, project_root)
+	_expect(first.ok and second.ok, "Two supported assets with the same source filename must both import successfully.")
+	if first.ok and second.ok:
+		_expect(first.asset.path != second.asset.path and first.asset.id != second.asset.id, "Same-name imports must receive distinct project-relative paths and asset IDs.")
+		var first_copy := FileAccess.open(project_root.path_join(String(first.asset.path)), FileAccess.READ)
+		var second_copy := FileAccess.open(project_root.path_join(String(second.asset.path)), FileAccess.READ)
+		var first_contents := first_copy.get_as_text() if first_copy != null else ""
+		var second_contents := second_copy.get_as_text() if second_copy != null else ""
+		_expect(first_contents == "first asset" and second_contents == "second asset", "A later same-name import must not overwrite the previously imported asset.")
+		if first_copy != null:
+			first_copy.close()
+		if second_copy != null:
+			second_copy.close()
+		for relative_path: String in [String(first.asset.path), String(second.asset.path)]:
+			var copied_path := project_root.path_join(relative_path)
+			if FileAccess.file_exists(copied_path):
+				DirAccess.remove_absolute(copied_path)
+	for source_path: String in [first_source, second_source]:
+		if FileAccess.file_exists(source_path):
+			DirAccess.remove_absolute(source_path)
+	for directory: String in [project_root.path_join("assets"), source_a, source_b, project_root, fixture_root]:
+		if DirAccess.dir_exists_absolute(directory):
+			DirAccess.remove_absolute(directory)
 
 
 func _test_3d_clip_resolution() -> void:
