@@ -12,6 +12,7 @@ func _initialize() -> void:
 	_test_sample_validation()
 	_test_duplicate_ids_fail()
 	_test_duplicate_structural_ids_fail()
+	_test_malformed_structural_collections_fail()
 	_test_backward_branch_fails()
 	_test_unknown_events_survive()
 	_test_player_event_order()
@@ -43,7 +44,7 @@ func _initialize() -> void:
 	_test_duplicate_take_undo_redo()
 	_test_take_switch_rebinds_inspector_duration()
 	if failures.is_empty():
-		print("Action Director tests passed: 33/33")
+		print("Action Director tests passed: 34/34")
 		quit(0)
 	else:
 		for failure in failures:
@@ -83,6 +84,32 @@ func _test_duplicate_structural_ids_fail() -> void:
 		raw.takes[0]["id"] = "take-one"
 		fixture.mutate.call(raw)
 		_expect(not ActionSpecCodec.validate(raw).ok, "Duplicate %s IDs must fail validation." % fixture.field)
+
+
+func _test_malformed_structural_collections_fail() -> void:
+	var raw := _minimal_action()
+	raw.takes[0].markers = ["not-a-marker-object"]
+	var result := ActionSpecCodec.validate(raw)
+	_expect(not result.ok and "Take Default contains an invalid marker object." in result.errors, "Malformed marker entries must fail validation instead of being silently ignored.")
+	for fixture: Dictionary in [
+		{"label": "markers", "error": "Take Default markers must be an array.", "mutate": func(action: Dictionary): action.takes[0].markers = {"bad": true}},
+		{"label": "tracks", "error": "Take Default tracks must be an array.", "mutate": func(action: Dictionary): action.takes[0].tracks = {"bad": true}},
+		{"label": "events", "error": "Events for track events must be an array.", "mutate": func(action: Dictionary): action.takes[0].tracks[0].events = {"bad": true}},
+		{"label": "branches", "error": "Take Default branches must be an array.", "mutate": func(action: Dictionary): action.takes[0].branches = {"bad": true}},
+	]:
+		var malformed := _minimal_action()
+		fixture.mutate.call(malformed)
+		var validation := ActionSpecCodec.validate(malformed)
+		_expect(not validation.ok and String(fixture.error) in validation.errors, "Malformed %s containers must return a clear validation error." % fixture.label)
+	var malformed_path := "user://malformed-collections.action.json"
+	var malformed_file := FileAccess.open(malformed_path, FileAccess.WRITE)
+	malformed_file.store_string(JSON.stringify(raw, "\t", false, true) + "\n")
+	malformed_file.close()
+	var original_text := FileAccess.get_file_as_string(malformed_path)
+	var loaded := ActionSpecCodec.load_json(malformed_path)
+	_expect(not loaded.ok and loaded.has("raw") and loaded.raw.takes[0].markers == raw.takes[0].markers, "A rejected action must return its original parsed data for recovery.")
+	_expect(FileAccess.get_file_as_string(malformed_path) == original_text, "Validation must not rewrite a malformed source file.")
+	DirAccess.remove_absolute(malformed_path)
 
 
 func _test_backward_branch_fails() -> void:

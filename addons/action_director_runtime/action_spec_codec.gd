@@ -99,38 +99,56 @@ static func _validate_take(take: Variant, take_index: int, ids: Dictionary, erro
 	if duration <= 0:
 		errors.append("Take %s must have a positive duration." % take_name)
 	var markers := {}
-	for marker: Variant in take.get("markers", []):
-		if not marker is Dictionary:
-			continue
-		var marker_id := String(marker.get("id", ""))
-		var marker_tick := int(marker.get("tick", -1))
-		if marker_id == "" or marker_tick < 0 or marker_tick > duration:
-			errors.append("Take %s contains an invalid marker." % take_name)
-		else:
-			_register_id(marker_id, "marker", ids, errors)
-			markers[marker_id] = marker_tick
-	for track: Variant in take.get("tracks", []):
-		if not track is Dictionary:
-			errors.append("Take %s contains an invalid track." % take_name)
-			continue
-		_register_id(String(track.get("id", "")), "track", ids, errors)
-		for event: Variant in track.get("events", []):
-			_validate_event(event, take_name, duration, ids, errors, warnings)
-	for branch: Variant in take.get("branches", []):
-		if not branch is Dictionary:
-			errors.append("Take %s contains an invalid branch." % take_name)
-			continue
-		_register_id(String(branch.get("id", "")), "branch", ids, errors)
-		var at_tick := int(branch.get("at_tick", -1))
-		var target := String(branch.get("target_marker", ""))
-		var condition: Dictionary = branch.get("condition", {})
-		var kind := String(condition.get("kind", ""))
-		if not SUPPORTED_CONDITIONS.has(kind):
-			warnings.append("Branch %s uses unknown condition %s; it will not execute." % [branch.get("id", "?"), kind])
-		if not markers.has(target):
-			errors.append("Branch %s targets missing marker %s." % [branch.get("id", "?"), target])
-		elif int(markers[target]) <= at_tick:
-			errors.append("Branch %s must target a later marker." % branch.get("id", "?"))
+	var marker_values: Variant = take.get("markers", [])
+	if not marker_values is Array:
+		errors.append("Take %s markers must be an array." % take_name)
+	else:
+		for marker: Variant in marker_values:
+			if not marker is Dictionary:
+				errors.append("Take %s contains an invalid marker object." % take_name)
+				continue
+			var marker_id := String(marker.get("id", ""))
+			var marker_tick := int(marker.get("tick", -1))
+			if marker_id == "" or marker_tick < 0 or marker_tick > duration:
+				errors.append("Take %s contains an invalid marker." % take_name)
+			else:
+				_register_id(marker_id, "marker", ids, errors)
+				markers[marker_id] = marker_tick
+	var track_values: Variant = take.get("tracks", [])
+	if not track_values is Array:
+		errors.append("Take %s tracks must be an array." % take_name)
+	else:
+		for track: Variant in track_values:
+			if not track is Dictionary:
+				errors.append("Take %s contains an invalid track." % take_name)
+				continue
+			var track_id := String(track.get("id", ""))
+			_register_id(track_id, "track", ids, errors)
+			var event_values: Variant = track.get("events", [])
+			if not event_values is Array:
+				errors.append("Events for track %s must be an array." % track_id)
+				continue
+			for event: Variant in event_values:
+				_validate_event(event, take_name, duration, ids, errors, warnings)
+	var branch_values: Variant = take.get("branches", [])
+	if not branch_values is Array:
+		errors.append("Take %s branches must be an array." % take_name)
+	else:
+		for branch: Variant in branch_values:
+			if not branch is Dictionary:
+				errors.append("Take %s contains an invalid branch." % take_name)
+				continue
+			_register_id(String(branch.get("id", "")), "branch", ids, errors)
+			var at_tick := int(branch.get("at_tick", -1))
+			var target := String(branch.get("target_marker", ""))
+			var condition: Dictionary = branch.get("condition", {})
+			var kind := String(condition.get("kind", ""))
+			if not SUPPORTED_CONDITIONS.has(kind):
+				warnings.append("Branch %s uses unknown condition %s; it will not execute." % [branch.get("id", "?"), kind])
+			if not markers.has(target):
+				errors.append("Branch %s targets missing marker %s." % [branch.get("id", "?"), target])
+			elif int(markers[target]) <= at_tick:
+				errors.append("Branch %s must target a later marker." % branch.get("id", "?"))
 
 
 static func _validate_event(event: Variant, take_name: String, duration: int, ids: Dictionary, errors: Array[String], warnings: Array[String]) -> void:

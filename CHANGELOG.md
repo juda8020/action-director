@@ -10,6 +10,10 @@
 
 ### 修正
 
+- 修正損壞或手動編寫的 ActionSpec 將 `markers`、`tracks`、`events` 或
+  `branches` 寫成非陣列，或在 marker 陣列放入非物件資料時，驗證器可能
+  默默忽略內容或只回報間接錯誤的問題；現在會拒絕載入並指出損壞的結構，
+  原始 JSON 保持不變，適用於 2D 與 3D 規格。
 - 修正 `miss` 分支與 Hitbox 結束時間相同時，Runtime 會在自動落空結果建立前
   提早判斷分支的問題；現在同一 tick 會先關閉 Hitbox 並記錄 `miss`，再判斷
   分支，因此 2D／3D ActionSpec 都能在有效期結束的精確邊界採用落空路徑。
@@ -32,6 +36,9 @@
 
 ### 測試
 
+- 新增 ActionSpec 結構容器損壞回歸案例，覆蓋 marker 非物件項目，以及
+  markers／tracks／events／branches 非陣列資料；完整 Godot 4.7 測試增加
+  為 34／34 項。
 - 新增 Hitbox 結束 tick 與 `miss` 分支 tick 相同的 Runtime 回歸案例；完整
   Godot 4.7 測試增加為 33／33 項。
 - 新增同名素材匯入回歸案例，確認兩份來源檔取得不同的專案相對路徑與素材

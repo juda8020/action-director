@@ -17,6 +17,11 @@ Each take declares its duration, forward markers, branches, and tracks. Each
 event has a stable `id`, a supported or preserved `type`, inclusive start/end
 ticks, an optional actor ID, and a type-owned `payload` dictionary.
 
+`takes`, `markers`, `tracks`, `events`, and `branches` are JSON arrays. Their
+entries must be objects. The loader returns a validation error for malformed
+known structures and preserves the original file for repair; it does not skip
+the damaged entry or rewrite the source JSON.
+
 ## Supported event types
 
 `animation`, `motion`, `hitbox`, `hurtbox`, `window`, `feel`, `audio`, `vfx`,
@@ -52,7 +57,8 @@ the Alpha.
 ## Tick ranges
 
 Start and end ticks are inclusive in files and editor visuals. Runtime opens
-events scheduled for a tick, evaluates branches, then closes events whose
-inclusive end is that tick. One-tick events therefore open and close during the
-same tick. Branch skips and action completion explicitly close any active
+events scheduled for a tick, closes events whose inclusive end is that tick,
+then evaluates branches. One-tick events therefore open and close during the
+same tick, and a closing hitbox can supply the fallback `miss` for a branch on
+that tick. Branch skips and action completion explicitly close any active
 windows. This ordering is deterministic across 30, 60, and 120 FPS.
