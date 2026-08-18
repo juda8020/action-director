@@ -62,7 +62,7 @@ A track groups events by purpose. Each event has stable identity, timing, an opt
 3. Press Space. Both stages play from the same tick and input context.
 4. Read the first-difference summary above the stages. In the sample, Take B attacks earlier, lunges farther, and ends sooner.
 5. Select an active window, hitbox, or motion event on the timeline.
-6. Change its tick or Payload JSON in the Inspector and choose **Apply event changes**. Invalid JSON is rejected without replacing the previous event.
+6. Change its tick or Payload JSON in the Inspector and choose **Apply event changes**. Invalid JSON or an edit that would invalidate the current ActionSpec is explained and rejected without replacing the previous event.
 7. Use Ctrl/Cmd+Z to undo and Ctrl/Cmd+Shift+Z (or Ctrl+Y on Windows) to redo.
 8. Save an `.adproject`, then export an `.action.json`.
 

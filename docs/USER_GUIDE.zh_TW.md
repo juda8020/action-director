@@ -62,7 +62,7 @@
 3. 按 Space 播放。觀察兩邊接近假人、紅色攻擊框出現與命中停頓的差別。
 4. 查看舞台上方的「首次差異」。內建範例中 Take B 的攻擊更早、突進更遠、總長較短。
 5. 在下方時間軸點選一個事件，例如 active window、hitbox 或 motion。
-6. 在右側修改 tick 或 Payload JSON，按「套用事件修改」。若 JSON 不合法，程式會拒絕修改並保留原資料。
+6. 在右側修改 tick 或 Payload JSON，按「套用事件修改」。若 JSON 不合法，或修改會使目前 ActionSpec 無效，程式會說明原因、拒絕修改並保留原資料。
 7. 使用 Ctrl/Cmd+Z 復原，或 Ctrl/Cmd+Shift+Z（Windows 亦可 Ctrl+Y）重做。
 8. 按「儲存」建立 `.adproject` 工作區，再按「匯出」產生 `.action.json`。
 

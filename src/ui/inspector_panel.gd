@@ -6,6 +6,7 @@ signal validation_failed(message: String)
 
 var selected_event: Dictionary = {}
 var spec: ActionSpec
+var active_take_name := ""
 var take_duration := 100000
 var title_label: Label
 var id_value: Label
@@ -123,6 +124,7 @@ func set_localization(value: ActionLocalization) -> void:
 
 func set_spec(value: ActionSpec, take_name := "") -> void:
 	spec = value
+	active_take_name = take_name
 	if start_spin == null or end_spin == null:
 		return
 	take_duration = spec.get_duration_ticks(take_name) if spec != null and take_name != "" else 100000
@@ -170,6 +172,10 @@ func _apply_changes() -> void:
 	if int(start_spin.value) < 0 or int(end_spin.value) > take_duration:
 		validation_failed.emit(localization.text("timing_out_of_range", [take_duration]))
 		return
+	var contract_error := _draft_contract_error(parsed)
+	if contract_error != "":
+		validation_failed.emit(localization.text("event_contract_invalid", [contract_error]))
+		return
 	selected_event = _edited_event(parsed)
 	event_changed.emit(selected_event.duplicate(true))
 	error_label.text = ""
@@ -182,8 +188,27 @@ func _validate_payload() -> void:
 	var parsed: Variant = JSON.parse_string(payload_text.text)
 	var valid := parsed is Dictionary
 	var changed := valid and not selected_event.is_empty() and _has_changes(parsed)
-	apply_button.disabled = selected_event.is_empty() or not valid or not changed
-	error_label.text = "" if valid or selected_event.is_empty() else localization.text("payload_invalid")
+	var contract_error := _draft_contract_error(parsed) if valid and not selected_event.is_empty() else ""
+	apply_button.disabled = selected_event.is_empty() or not valid or not changed or contract_error != ""
+	if not valid and not selected_event.is_empty():
+		error_label.text = localization.text("payload_invalid")
+	elif contract_error != "":
+		error_label.text = localization.text("event_contract_invalid", [contract_error])
+	else:
+		error_label.text = ""
+
+
+func _draft_contract_error(parsed_payload: Dictionary) -> String:
+	if spec == null or active_take_name == "":
+		return ""
+	var replacement := _edited_event(parsed_payload)
+	var replaced := ActionAuthoringUtils.replace_event(spec.data, active_take_name, replacement)
+	if not replaced.get("ok", false):
+		return String(replaced.get("error", "The event could not be updated."))
+	var validation := ActionSpecCodec.validate(replaced.data)
+	if validation.ok:
+		return ""
+	return String(validation.errors[0]) if not validation.errors.is_empty() else "The edited ActionSpec is invalid."
 
 
 func _edited_event(parsed_payload: Dictionary) -> Dictionary:

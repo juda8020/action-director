@@ -41,11 +41,12 @@ func _initialize() -> void:
 	_test_complete_manuals()
 	_test_graphical_authoring_contract()
 	_test_graphical_authoring_controls()
+	_test_inspector_blocks_invalid_action_edits()
 	_test_ui_hierarchy_states()
 	_test_duplicate_take_undo_redo()
 	_test_take_switch_rebinds_inspector_duration()
 	if failures.is_empty():
-		print("Action Director tests passed: 35/35")
+		print("Action Director tests passed: 36/36")
 		quit(0)
 	else:
 		for failure in failures:
@@ -632,6 +633,28 @@ func _test_graphical_authoring_controls() -> void:
 	inspector_panel._apply_changes()
 	_expect(int(observed.event.get("start_tick", -1)) == 10 and int(observed.event.get("end_tick", -1)) == 10, "Inspector must prevent event timing from exceeding the take duration.")
 	inspector_panel.free()
+
+
+func _test_inspector_blocks_invalid_action_edits() -> void:
+	var raw := _minimal_action()
+	var track_result := AuthoringUtils.add_track(raw, "Default", "hitbox")
+	var event_result := AuthoringUtils.add_event(track_result.data, "Default", track_result.track_id, "hitbox", 4, "2d")
+	var panel := ActionInspectorPanel.new()
+	panel.localization = ActionLocalization.new("en")
+	panel._ready()
+	panel.set_spec(ActionSpecCodec.from_dictionary(event_result.data), "Default")
+	panel.inspect_event(event_result.event)
+	var observed := {"event": {}}
+	panel.event_changed.connect(func(event: Dictionary): observed.event = event)
+	panel.payload_text.text = JSON.stringify({"shape": {"kind": "box", "offset": [0, 0, 0], "size": [1, 1, 1]}})
+	panel._validate_payload()
+	_expect(panel.apply_button.disabled and panel.error_label.text.contains("2D"), "Inspector must explain and block a 3D hitbox payload inside a 2D ActionSpec before Apply is pressed.")
+	panel._apply_changes()
+	_expect(observed.event.is_empty(), "Inspector must not emit an ActionSpec-invalid event edit that would fail only during export.")
+	panel.payload_text.text = JSON.stringify({"shape": {"kind": "rect", "offset": [0, 0], "size": [64, 48]}})
+	panel._validate_payload()
+	_expect(not panel.apply_button.disabled and panel.error_label.text == "", "Inspector must re-enable Apply after the event payload matches the ActionSpec dimension.")
+	panel.free()
 
 
 func _test_ui_hierarchy_states() -> void:

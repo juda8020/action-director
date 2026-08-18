@@ -55,7 +55,7 @@ Track은 animation, window, hitbox, motion, feel, audio 같은 목적별로 Even
 2. Space를 누르면 양쪽이 같은 tick과 입력 조건으로 재생됩니다.
 3. 무대 위의 첫 차이를 확인합니다. 샘플 Take B는 더 일찍 공격하고 더 멀리 이동하며 빨리 끝납니다.
 4. 타임라인에서 active window, hitbox 또는 motion Event를 선택합니다.
-5. Inspector에서 tick 또는 Payload JSON을 수정하고 **이벤트 변경 적용**을 누릅니다. 잘못된 JSON은 기존 데이터를 유지한 채 거부됩니다.
+5. Inspector에서 tick 또는 Payload JSON을 수정하고 **이벤트 변경 적용**을 누릅니다. 잘못된 JSON이나 현재 ActionSpec을 무효로 만드는 수정은 이유를 표시하고 기존 데이터를 유지한 채 거부됩니다.
 6. Ctrl/Cmd+Z로 실행 취소, Ctrl/Cmd+Shift+Z(Windows는 Ctrl+Y도 가능)로 다시 실행합니다.
 7. `.adproject`를 저장한 뒤 공식 `.action.json`을 내보냅니다.
 

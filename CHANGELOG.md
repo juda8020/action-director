@@ -10,6 +10,9 @@
 
 ### 修正
 
+- 修正 Inspector 只檢查 Payload 是否為 JSON 物件，卻仍可套用會使整份
+  ActionSpec 無效的事件內容；現在會在修改送出前以目前 Take 與維度驗證
+  草稿，顯示具體錯誤並保留原事件，避免 2D／3D Payload 錯誤拖到匯出才發現。
 - 修正 ActionSpec 只驗證根層 `dimension`，卻仍允許 2D 動作使用三維 Motion
   向量或 3D box／sphere，及 3D 動作使用二維向量或 rect／circle 的問題；
   現在會在匯入與匯出前指出事件與欄位，避免錯誤資料進入預演或 Godot Adapter。
@@ -39,6 +42,9 @@
 
 ### 測試
 
+- 新增 Inspector 即時契約驗證回歸案例，確認 2D 動作中的 3D Hitbox Payload
+  不能套用，修正後可重新輸入正確 2D Payload；完整 Godot 4.7 測試增加為
+  36／36 項。
 - 新增 2D／3D Motion、Hitbox 與 Hurtbox 座標混用回歸案例，確認錯誤維度
   的向量與形狀會提供明確驗證錯誤；完整 Godot 4.7 測試增加為 35／35 項。
 - 新增 ActionSpec 結構容器損壞回歸案例，覆蓋 marker 非物件項目，以及

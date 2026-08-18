@@ -15,7 +15,7 @@ const CONTENT := {
 			["Open the 2D spritesheet demo", "The bundled original eight-frame sword fighter is sliced and advanced by timeline ticks, so Take A and Take B show a real frame-animation timing difference."],
 			["Play both takes", "Press Space. The paired stages run Take A and Take B from the same tick and input context."],
 			["Read the difference", "The line above the stages reports the first semantic difference and duration delta. Click that event in the timeline to inspect it."],
-			["Edit one event", "Change start/end tick or Payload JSON in the right inspector, then choose Apply event changes. Use Undo if needed."],
+			["Edit one event", "Change start/end tick or Payload JSON in the right inspector, then choose Apply event changes. Invalid ActionSpec edits are explained and leave the previous event unchanged; use Undo for accepted edits."],
 			["Save your result", "Save an .adproject for the workspace, then Export an .action.json as the version-controlled source of truth."],
 		]},
 		"timeline": {"title": "Timeline and combat timing", "summary": "Place animation, hitbox, movement, feel, audio, VFX, camera, and game events on fixed ticks.", "time": "8 min", "action": "open_2d", "steps": [
@@ -85,7 +85,7 @@ const CONTENT := {
 			["開啟 2D 逐格動作範例", "內附原創 8 格劍士動作，會依時間軸 tick 切格播放，因此 Take A 與 Take B 會真實呈現逐格動畫的時序差異。"],
 			["同時播放兩個 Take", "按 Space。左右舞台會以相同 tick 與輸入條件播放 Take A、Take B。"],
 			["閱讀差異", "舞台上方會顯示首次語意差異與長度差。到時間軸點選該事件，即可在右側檢查。"],
-			["修改一個事件", "在 Inspector 改開始／結束 tick 或 Payload JSON，再按「套用事件修改」。需要時可復原操作。"],
+			["修改一個事件", "在 Inspector 改開始／結束 tick 或 Payload JSON，再按「套用事件修改」。若修改會使 ActionSpec 無效，程式會說明原因並保留原事件；已接受的修改仍可復原。"],
 			["保存成果", "先儲存 .adproject 工作區，再匯出 .action.json 作為版本控制的正式來源。"],
 		]},
 		"timeline": {"title": "時間軸與戰鬥時序", "summary": "用固定 tick 編排動畫、攻擊框、位移、手感、音效、VFX、鏡頭與遊戲事件。", "time": "8 分鐘", "action": "open_2d", "steps": [
@@ -155,7 +155,7 @@ const CONTENT := {
 			["2Dスプライトデモを開く", "付属のオリジナル8フレーム剣士をTimeline tickで切り替え、Take AとTake Bのフレームアニメ時間差を実際に確認できます。"],
 			["2つのTakeを再生", "Spaceを押すと、左右のステージが同じtickと入力条件でTake A/Bを再生します。"],
 			["差分を読む", "ステージ上部に最初の意味的差分と長さの差が表示されます。タイムラインでイベントを選び、右側で確認します。"],
-			["イベントを編集", "開始／終了tickまたはPayload JSONを変更し、「イベント変更を適用」を押します。必要なら元に戻せます。"],
+			["イベントを編集", "開始／終了tickまたはPayload JSONを変更し、「イベント変更を適用」を押します。ActionSpecが無効になる変更は理由を表示して元のEventを保持し、適用済みの変更は元に戻せます。"],
 			["結果を保存", ".adprojectでワークスペースを保存し、バージョン管理用の.action.jsonを書き出します。"],
 		]},
 		"timeline": {"title": "タイムラインと戦闘タイミング", "summary": "固定tickでアニメーション、当たり判定、移動、演出、音、VFX、カメラ、ゲームイベントを配置します。", "time": "8分", "action": "open_2d", "steps": [
@@ -225,7 +225,7 @@ const CONTENT := {
 			["2D 스프라이트 데모 열기", "내장 오리지널 8프레임 검사가 타임라인 tick에 따라 전환되어 Take A와 Take B의 실제 프레임 애니메이션 타이밍 차이를 보여 줍니다."],
 			["두 Take 재생", "Space를 누르면 좌우 무대가 같은 tick과 입력 조건으로 Take A/B를 재생합니다."],
 			["차이 읽기", "무대 위에 최초 의미 차이와 길이 차이가 표시됩니다. 타임라인 이벤트를 눌러 오른쪽에서 확인합니다."],
-			["이벤트 수정", "시작/종료 tick 또는 Payload JSON을 수정하고 ‘이벤트 변경 적용’을 누릅니다. 필요하면 실행 취소합니다."],
+			["이벤트 수정", "시작/종료 tick 또는 Payload JSON을 수정하고 ‘이벤트 변경 적용’을 누릅니다. ActionSpec을 무효로 만드는 수정은 이유를 표시하고 기존 이벤트를 유지하며, 적용된 수정은 실행 취소할 수 있습니다."],
 			["결과 저장", ".adproject로 작업공간을 저장한 뒤 버전 관리용 .action.json을 내보냅니다."],
 		]},
 		"timeline": {"title": "타임라인과 전투 타이밍", "summary": "고정 tick에 애니메이션, 히트박스, 이동, 연출, 오디오, VFX, 카메라, 게임 이벤트를 배치합니다.", "time": "8분", "action": "open_2d", "steps": [

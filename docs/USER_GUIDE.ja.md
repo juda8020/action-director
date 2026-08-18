@@ -55,7 +55,7 @@ Trackは用途別にEventを整理します。Runtimeは見た目の推測では
 2. Spaceで再生します。左右が同じtick・入力条件で動きます。
 3. ステージ上部の「最初の差分」を確認します。サンプルTake Bは早く攻撃し、遠く移動し、短く終了します。
 4. Timelineのactive window、hitbox、motion Eventを選びます。
-5. InspectorでtickまたはPayload JSONを変更し、「イベント変更を適用」します。不正JSONなら以前のEventを保持したまま拒否します。
+5. InspectorでtickまたはPayload JSONを変更し、「イベント変更を適用」します。不正JSON、または現在のActionSpecを無効にする変更は理由を表示し、以前のEventを保持したまま拒否します。
 6. Ctrl/Cmd+ZでUndo、Ctrl/Cmd+Shift+Z（WindowsはCtrl+Yも可）でRedoします。
 7. `.adproject`を保存し、正式な`.action.json`を書き出します。
 
