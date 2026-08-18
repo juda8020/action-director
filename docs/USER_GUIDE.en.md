@@ -202,7 +202,7 @@ Use game events for named signals, tags, and parameters such as spawning a proje
 1. Copy the closest built-in `.action.json` instead of starting with an empty file.
 2. Create tracks and events in the timeline. Close the file and use a text editor only when adding, deleting, or editing markers and branches.
 3. Give every take, track, event, marker, and branch a unique ID. Keep `start_tick <= end_tick <= duration_ticks`.
-4. Never mix 2D and 3D coordinates in one ActionSpec. A branch target marker must be later than its `at_tick`.
+4. Never mix 2D and 3D coordinates in one ActionSpec. The loader rejects three-value Motion/shape vectors or `box`/`sphere` in 2D, and two-value vectors or `rect`/`circle` in 3D. `capsule` works in either dimension, but its vectors must still match. A branch target marker must be later than its `at_tick`.
 5. Save the JSON and choose Open in Action Director to reload it. Duplicate UUIDs, damaged JSON, invalid ranges, and backward branches are rejected.
 6. After it loads, use the graphical editor for track/event authoring, event type/actor/timing/payload refinement, take duplication, A/B rehearsal, and export.
 

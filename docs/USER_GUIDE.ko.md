@@ -143,7 +143,7 @@ Adobe는 Mixamo 자산을 프로젝트에 사용하는 것은 허용하지만 �
 1. 가장 가까운 내장 `.action.json`을 복사하고 빈 파일에서 시작하지 않습니다.
 2. Track/Event는 Timeline에서 만듭니다. Marker/Branch를 추가·삭제·편집할 때만 파일을 닫고 Text editor를 사용합니다.
 3. 모든 Take, Track, Event, Marker, Branch에 고유 ID를 주고 `start_tick <= end_tick <= duration_ticks`를 지킵니다.
-4. 한 ActionSpec에 2D/3D 좌표를 섞지 않고 Branch target marker를 `at_tick` 뒤에 둡니다.
+4. 한 ActionSpec에 2D/3D 좌표를 섞지 않습니다. Loader는 2D의 3개 값 Motion/shape vector 또는 `box`/`sphere`, 3D의 2개 값 vector 또는 `rect`/`circle`을 거부합니다. `capsule`은 두 Dimension에서 쓸 수 있지만 vector 값 개수는 해당 Dimension과 맞아야 합니다. Branch target marker는 `at_tick` 뒤에 둡니다.
 5. JSON 저장 후 Action Director의 **열기**로 다시 불러옵니다. 중복 UUID, 손상 JSON, 잘못된 범위, 뒤쪽이 아닌 Branch는 거부됩니다.
 6. 성공 후 GUI에서 Track/Event 작성, Event type/actor/tick/Payload 조정, Take 복제, A/B 리허설, 내보내기를 합니다.
 

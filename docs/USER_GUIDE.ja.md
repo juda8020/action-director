@@ -143,7 +143,7 @@ Mixamo素材ではありません。確認後、自分のAdobe IDでFBXを取得
 1. 最も近い内蔵`.action.json`をCopyし、空Fileから始めないでください。
 2. Track／EventはTimelineで作成します。Marker／Branchを追加・削除・編集するときだけFileを閉じてText editorを使います。
 3. Take、Track、Event、Marker、Branchごとに一意IDを付け、`start_tick <= end_tick <= duration_ticks`を守ります。
-4. 2D／3D座標を同じActionSpecへ混在させず、Branch target markerを`at_tick`より後へ置きます。
+4. 2D／3D座標を同じActionSpecへ混在させないでください。Loaderは、2D内の3要素Motion／shape vectorまたは`box`／`sphere`、3D内の2要素vectorまたは`rect`／`circle`を拒否します。`capsule`はどちらでも使えますが、vector要素数はDimensionに合わせます。Branch target markerは`at_tick`より後へ置きます。
 5. JSONを保存し、Action Directorの「開く」で再読込します。重複UUID、破損JSON、不正範囲、後方Branchは拒否されます。
 6. 読込後、GUIでTrack／Event作成、Event type／actor／tick／Payload調整、Take複製、A/Bリハーサル、書出を行います。
 

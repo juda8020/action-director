@@ -13,6 +13,7 @@ func _initialize() -> void:
 	_test_duplicate_ids_fail()
 	_test_duplicate_structural_ids_fail()
 	_test_malformed_structural_collections_fail()
+	_test_dimension_specific_payloads_fail()
 	_test_backward_branch_fails()
 	_test_unknown_events_survive()
 	_test_player_event_order()
@@ -44,7 +45,7 @@ func _initialize() -> void:
 	_test_duplicate_take_undo_redo()
 	_test_take_switch_rebinds_inspector_duration()
 	if failures.is_empty():
-		print("Action Director tests passed: 34/34")
+		print("Action Director tests passed: 35/35")
 		quit(0)
 	else:
 		for failure in failures:
@@ -110,6 +111,41 @@ func _test_malformed_structural_collections_fail() -> void:
 	_expect(not loaded.ok and loaded.has("raw") and loaded.raw.takes[0].markers == raw.takes[0].markers, "A rejected action must return its original parsed data for recovery.")
 	_expect(FileAccess.get_file_as_string(malformed_path) == original_text, "Validation must not rewrite a malformed source file.")
 	DirAccess.remove_absolute(malformed_path)
+
+
+func _test_dimension_specific_payloads_fail() -> void:
+	var rejected_action: Dictionary = {}
+	for fixture: Dictionary in [
+		{"label": "2D motion with a 3D delta", "dimension": "2d", "error": "Event mixed-motion-2d motion delta must contain exactly 2 values for 2D.", "event": {"id": "mixed-motion-2d", "type": "motion", "start_tick": 1, "end_tick": 2, "payload": {"delta": [1, 2, 3]}}},
+		{"label": "3D motion with a 2D delta", "dimension": "3d", "error": "Event mixed-motion-3d motion delta must contain exactly 3 values for 3D.", "event": {"id": "mixed-motion-3d", "type": "motion", "start_tick": 1, "end_tick": 2, "payload": {"delta": [1, 2]}}},
+		{"label": "2D hitbox with a 3D shape", "dimension": "2d", "error": "Event mixed-hitbox-2d uses 3D shape kind box in a 2D action.", "event": {"id": "mixed-hitbox-2d", "type": "hitbox", "start_tick": 1, "end_tick": 2, "payload": {"shape": {"kind": "box", "offset": [0, 0, 0], "size": [1, 1, 1]}}}},
+		{"label": "3D hurtbox with a 2D shape", "dimension": "3d", "error": "Event mixed-hurtbox-3d uses 2D shape kind rect in a 3D action.", "event": {"id": "mixed-hurtbox-3d", "type": "hurtbox", "start_tick": 1, "end_tick": 2, "payload": {"shape": {"kind": "rect", "offset": [0, 0], "size": [1, 1]}}}},
+	]:
+		var raw := _minimal_action()
+		raw.dimension = fixture.dimension
+		raw.takes[0].tracks[0].events = [fixture.event]
+		var validation := ActionSpecCodec.validate(raw)
+		_expect(not validation.ok and fixture.error in validation.errors, "%s must fail with a clear validation error instead of reaching the wrong preview or adapter." % fixture.label)
+		if rejected_action.is_empty():
+			rejected_action = raw
+	for dimension: String in ["2d", "3d"]:
+		var valid := _minimal_action()
+		valid.dimension = dimension
+		var vector := [0, 0, 0] if dimension == "3d" else [0, 0]
+		valid.takes[0].tracks[0].events = [{"id": "valid-capsule-%s" % dimension, "type": "hurtbox", "start_tick": 1, "end_tick": 2, "payload": {"shape": {"kind": "capsule", "offset": vector, "size": vector}}}]
+		_expect(ActionSpecCodec.validate(valid).ok, "A capsule with matching %s vectors must remain valid." % dimension.to_upper())
+	var source_path := "user://mixed-dimension.action.json"
+	var export_path := "user://mixed-dimension-export.action.json"
+	DirAccess.remove_absolute(export_path)
+	var source_file := FileAccess.open(source_path, FileAccess.WRITE)
+	source_file.store_string(JSON.stringify(rejected_action, "\t", false, true) + "\n")
+	source_file.close()
+	var original_text := FileAccess.get_file_as_string(source_path)
+	var loaded := ActionSpecCodec.load_json(source_path)
+	_expect(not loaded.ok and loaded.has("raw") and FileAccess.get_file_as_string(source_path) == original_text, "Import must reject a mixed-dimension ActionSpec without rewriting its recovery data.")
+	var exported := ActionSpecCodec.save_json(ActionSpecCodec.from_dictionary(rejected_action), export_path)
+	_expect(not exported.ok and not FileAccess.file_exists(export_path), "Export must refuse a mixed-dimension ActionSpec before writing a target file.")
+	DirAccess.remove_absolute(source_path)
 
 
 func _test_backward_branch_fails() -> void:

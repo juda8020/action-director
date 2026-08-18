@@ -22,6 +22,16 @@ entries must be objects. The loader returns a validation error for malformed
 known structures and preserves the original file for repair; it does not skip
 the damaged entry or rewrite the source JSON.
 
+## Dimension-owned payloads
+
+Known Motion, Hitbox, and Hurtbox payloads must match the action's root
+`dimension`. A 2D motion `delta`, shape `offset`, or shape `size` contains
+exactly two values; its dedicated shape kinds are `rect` and `circle`. The 3D
+equivalents contain exactly three values and use `box` or `sphere`. `capsule`
+is valid in either dimension, but its vectors still use the matching value
+count. A mixed payload is rejected before preview, export, or Runtime handoff;
+the original JSON remains available for repair.
+
 ## Supported event types
 
 `animation`, `motion`, `hitbox`, `hurtbox`, `window`, `feel`, `audio`, `vfx`,

@@ -205,7 +205,7 @@ Game event 適合自訂 signal、標籤與參數，例如生成投射物、扣�
 1. 先複製最接近的內建 `.action.json`，不要從完全空白檔開始。
 2. Track 與 event 直接在時間軸建立；只有新增、刪除或修改 marker／branch 時才關閉檔案並使用文字編輯器。
 3. 每個 take、track、event、marker、branch 都要有不重複的 ID；同一事件須滿足 `start_tick <= end_tick <= duration_ticks`。
-4. 2D 與 3D 座標不能在同一 ActionSpec 混用。新增 branch 時，`target_marker` 的 tick 必須晚於 `at_tick`。
+4. 2D 與 3D 座標不能在同一 ActionSpec 混用。載入器會拒絕 2D 中的三值 Motion／shape 向量或 `box`／`sphere`，以及 3D 中的二值向量或 `rect`／`circle`；`capsule` 可用於兩種維度，但向量長度仍須一致。新增 branch 時，`target_marker` 的 tick 必須晚於 `at_tick`。
 5. 儲存 JSON，回到動作導演台按「開啟」重新載入。重複 UUID、毀損 JSON、非法範圍或向後分支會被拒絕。
 6. 載入成功後，用圖形介面新增軌道／事件、修改 type／actor／tick／Payload、複製 Take、A/B 試打並匯出。
 

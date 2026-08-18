@@ -73,7 +73,8 @@ static func validate(raw: Dictionary) -> Dictionary:
 		warnings.append("Schema %s is newer or incompatible; unknown data will be preserved." % raw.schema_version)
 	if String(raw.get("action_id", "")) == "":
 		errors.append("action_id is required.")
-	if String(raw.get("dimension", "")) not in ["2d", "3d"]:
+	var dimension := String(raw.get("dimension", ""))
+	if dimension not in ["2d", "3d"]:
 		errors.append("dimension must be either 2d or 3d.")
 	if int(raw.get("tick_rate", 0)) != 60:
 		errors.append("tick_rate must be 60 in schema 1.x.")
@@ -83,11 +84,11 @@ static func validate(raw: Dictionary) -> Dictionary:
 		errors.append("At least one take is required.")
 	else:
 		for take_index in takes.size():
-			_validate_take(takes[take_index], take_index, ids, errors, warnings)
+			_validate_take(takes[take_index], take_index, dimension, ids, errors, warnings)
 	return {"ok": errors.is_empty(), "errors": errors, "warnings": warnings}
 
 
-static func _validate_take(take: Variant, take_index: int, ids: Dictionary, errors: Array[String], warnings: Array[String]) -> void:
+static func _validate_take(take: Variant, take_index: int, dimension: String, ids: Dictionary, errors: Array[String], warnings: Array[String]) -> void:
 	if not take is Dictionary:
 		errors.append("Take %d must be an object." % take_index)
 		return
@@ -129,7 +130,7 @@ static func _validate_take(take: Variant, take_index: int, ids: Dictionary, erro
 				errors.append("Events for track %s must be an array." % track_id)
 				continue
 			for event: Variant in event_values:
-				_validate_event(event, take_name, duration, ids, errors, warnings)
+				_validate_event(event, take_name, duration, dimension, ids, errors, warnings)
 	var branch_values: Variant = take.get("branches", [])
 	if not branch_values is Array:
 		errors.append("Take %s branches must be an array." % take_name)
@@ -151,7 +152,7 @@ static func _validate_take(take: Variant, take_index: int, ids: Dictionary, erro
 				errors.append("Branch %s must target a later marker." % branch.get("id", "?"))
 
 
-static func _validate_event(event: Variant, take_name: String, duration: int, ids: Dictionary, errors: Array[String], warnings: Array[String]) -> void:
+static func _validate_event(event: Variant, take_name: String, duration: int, dimension: String, ids: Dictionary, errors: Array[String], warnings: Array[String]) -> void:
 	if not event is Dictionary:
 		errors.append("Take %s contains an invalid event." % take_name)
 		return
@@ -164,6 +165,39 @@ static func _validate_event(event: Variant, take_name: String, duration: int, id
 	var event_type := String(event.get("type", ""))
 	if not SUPPORTED_EVENT_TYPES.has(event_type):
 		warnings.append("Event %s uses unknown type %s; raw data will be preserved." % [event_id, event_type])
+	elif dimension in ["2d", "3d"]:
+		_validate_dimension_payload(event, event_id, event_type, dimension, errors)
+
+
+static func _validate_dimension_payload(event: Dictionary, event_id: String, event_type: String, dimension: String, errors: Array[String]) -> void:
+	var payload: Variant = event.get("payload", {})
+	if not payload is Dictionary:
+		return
+	if event_type == "motion" and payload.has("delta"):
+		_validate_vector_dimension(payload.delta, "motion delta", event_id, dimension, errors)
+	if event_type not in ["hitbox", "hurtbox"]:
+		return
+	var shape: Variant = payload.get("shape", {})
+	if not shape is Dictionary:
+		return
+	var shape_kind := String(shape.get("kind", ""))
+	var shape_dimension := {
+		"rect": "2d",
+		"circle": "2d",
+		"box": "3d",
+		"sphere": "3d",
+	}.get(shape_kind, "")
+	if shape_dimension != "" and shape_dimension != dimension:
+		errors.append("Event %s uses %s shape kind %s in a %s action." % [event_id, shape_dimension.to_upper(), shape_kind, dimension.to_upper()])
+	for field: String in ["offset", "size"]:
+		if shape.has(field):
+			_validate_vector_dimension(shape[field], "shape %s" % field, event_id, dimension, errors)
+
+
+static func _validate_vector_dimension(value: Variant, field_name: String, event_id: String, dimension: String, errors: Array[String]) -> void:
+	var expected_size := 3 if dimension == "3d" else 2
+	if not value is Array or value.size() != expected_size:
+		errors.append("Event %s %s must contain exactly %d values for %s." % [event_id, field_name, expected_size, dimension.to_upper()])
 
 
 static func _register_id(item_id: String, kind: String, ids: Dictionary, errors: Array[String]) -> void:

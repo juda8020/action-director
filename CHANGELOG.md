@@ -10,6 +10,9 @@
 
 ### 修正
 
+- 修正 ActionSpec 只驗證根層 `dimension`，卻仍允許 2D 動作使用三維 Motion
+  向量或 3D box／sphere，及 3D 動作使用二維向量或 rect／circle 的問題；
+  現在會在匯入與匯出前指出事件與欄位，避免錯誤資料進入預演或 Godot Adapter。
 - 修正損壞或手動編寫的 ActionSpec 將 `markers`、`tracks`、`events` 或
   `branches` 寫成非陣列，或在 marker 陣列放入非物件資料時，驗證器可能
   默默忽略內容或只回報間接錯誤的問題；現在會拒絕載入並指出損壞的結構，
@@ -36,6 +39,8 @@
 
 ### 測試
 
+- 新增 2D／3D Motion、Hitbox 與 Hurtbox 座標混用回歸案例，確認錯誤維度
+  的向量與形狀會提供明確驗證錯誤；完整 Godot 4.7 測試增加為 35／35 項。
 - 新增 ActionSpec 結構容器損壞回歸案例，覆蓋 marker 非物件項目，以及
   markers／tracks／events／branches 非陣列資料；完整 Godot 4.7 測試增加
   為 34／34 項。
@@ -61,6 +66,8 @@
 
 ### 文件
 
+- ActionSpec schema 與四語完整手冊補充 Motion／Hitbox／Hurtbox 的維度驗證
+  規則，包含 2D／3D 向量長度、專用形狀與共用 capsule 的界線。
 - 重製兩張可重現的公開產品截圖：2D 停在 Take B 先開 hitbox 的第 18
   tick 並選取位移事件；3D 停在 hitbox 生效的第 38 tick 並顯示 Inspector。
 
