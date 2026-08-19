@@ -20,7 +20,7 @@ const CONTENT := {
 		]},
 		"timeline": {"title": "Timeline and combat timing", "summary": "Place animation, hitbox, movement, feel, audio, VFX, camera, and game events on fixed ticks.", "time": "8 min", "action": "open_2d", "steps": [
 			["Author on the timeline", "Choose a type, then Add at playhead. The editor reuses a compatible selected track or creates one; Add track creates an empty lane."],
-			["Navigate", "Click the ruler to seek. Use comma and period for exact tick stepping. Scroll over the timeline to zoom."],
+			["Navigate", "Click the ruler to seek. Focus the timeline, then use Up/Down to select tracks and Left/Right to select events. Comma and period step exact ticks."],
 			["Read an event", "Each color has a stable meaning. The event begins at start_tick and remains active through end_tick, inclusively."],
 			["Edit safely", "Select an event, edit its type, actor, timing, or JSON object, and apply. Delete event/track is undoable. Markers and branches still use .action.json."],
 			["Compare takes", "Duplicate Take creates a full independent copy with new IDs. A/B comparison ignores those regenerated IDs and reports real timing or payload changes."],
@@ -71,7 +71,7 @@ const CONTENT := {
 		"shortcuts": {"title": "Keyboard reference", "summary": "Operate the core rehearsal loop without leaving the keyboard.", "time": "1 min", "action": "none", "steps": [
 			["Playback", "Space: play/pause · Comma: previous tick · Period: next tick · R: reset · C: A/B on/off"],
 			["Editing", "Ctrl/Cmd+Z: undo · Ctrl/Cmd+Shift+Z or Ctrl+Y: redo · Ctrl/Cmd+S: save project"],
-			["Timeline", "Mouse wheel: zoom · click ruler: seek · click event: inspect · click track label: select track · Delete: remove selection"],
+			["Timeline", "Focus timeline · Up/Down: select track · Left/Right: select event · Ctrl/Cmd+wheel: zoom · click ruler: seek · Delete: remove selection"],
 		]},
 	},
 	"zh_TW": {
@@ -90,7 +90,7 @@ const CONTENT := {
 		]},
 		"timeline": {"title": "時間軸與戰鬥時序", "summary": "用固定 tick 編排動畫、攻擊框、位移、手感、音效、VFX、鏡頭與遊戲事件。", "time": "8 分鐘", "action": "open_2d", "steps": [
 			["直接在時間軸編排", "先選事件類型，再按「加到播放頭」。程式會沿用相容軌道，沒有時自動建立；「新增軌道」可建立空白軌道。"],
-			["精確定位", "點時間尺跳轉；逗號與句點逐 tick 移動；在時間軸捲動滑鼠滾輪縮放。"],
+			["精確定位", "點時間尺跳轉；聚焦時間軸後用上／下選軌道、左／右選事件；逗號與句點逐 tick 移動。"],
 			["閱讀事件", "每種顏色代表固定語意。事件從 start_tick 開始，包含 end_tick 在內都維持有效。"],
 			["安全修改", "選事件後可改類型、演員、時間或 JSON；事件與軌道刪除都能復原。Marker 與 branch 目前仍使用 .action.json。"],
 			["比較 Take", "「複製 Take」會建立完整獨立副本與新 ID；A/B 比較忽略重建 ID，只回報真正的時序或 payload 差異。"],
@@ -141,7 +141,7 @@ const CONTENT := {
 		"shortcuts": {"title": "鍵盤快捷鍵", "summary": "不離開鍵盤完成核心預演循環。", "time": "1 分鐘", "action": "none", "steps": [
 			["播放", "Space：播放／暫停 · 逗號：前一 tick · 句點：下一 tick · R：重設 · C：A/B 開關"],
 			["編輯", "Ctrl/Cmd+Z：復原 · Ctrl/Cmd+Shift+Z 或 Ctrl+Y：重做 · Ctrl/Cmd+S：儲存專案"],
-			["時間軸", "滑鼠滾輪：縮放 · 點時間尺：跳轉 · 點事件：檢查 · 點軌道名稱：選軌道 · Delete：刪除選取項目"],
+			["時間軸", "聚焦時間軸 · 上／下：選軌道 · 左／右：選事件 · Ctrl/Cmd+滾輪：縮放 · 點時間尺：跳轉 · Delete：刪除選取項目"],
 		]},
 	},
 	"ja": {
@@ -160,7 +160,7 @@ const CONTENT := {
 		]},
 		"timeline": {"title": "タイムラインと戦闘タイミング", "summary": "固定tickでアニメーション、当たり判定、移動、演出、音、VFX、カメラ、ゲームイベントを配置します。", "time": "8分", "action": "open_2d", "steps": [
 			["タイムラインで作成", "種類を選び「再生ヘッドに追加」を押します。互換トラックを再利用し、なければ自動作成します。空トラックも追加できます。"],
-			["正確に移動", "ルーラーをクリックしてシークし、カンマ／ピリオドで1tickずつ移動します。ホイールでズームします。"],
+			["正確に移動", "ルーラーをクリックします。タイムラインにフォーカス後、上下でトラック、左右でイベントを選び、カンマ／ピリオドで1tickずつ移動します。"],
 			["イベントを読む", "色は固定の意味を持ちます。イベントはstart_tickからend_tickを含む範囲で有効です。"],
 			["安全に編集", "Eventの種類、Actor、時間、JSONを編集できます。Event／Track削除は元に戻せます。Marker／Branchはまだ.action.jsonを使います。"],
 			["Takeを比較", "Take複製は新しいIDの完全コピーを作ります。A/B比較はIDの違いを無視し、実際の時間・payload差分を示します。"],
@@ -211,7 +211,7 @@ const CONTENT := {
 		"shortcuts": {"title": "キーボード操作", "summary": "キーボードだけで中心的なリハーサルを行います。", "time": "1分", "action": "none", "steps": [
 			["再生", "Space：再生／一時停止 · ,：前tick · .：次tick · R：リセット · C：A/B切替"],
 			["編集", "Ctrl/Cmd+Z：元に戻す · Ctrl/Cmd+Shift+ZまたはCtrl+Y：やり直す · Ctrl/Cmd+S：保存"],
-			["タイムライン", "ホイール：ズーム · ルーラー：シーク · Event：詳細 · Track名：選択 · Delete：選択を削除"],
+			["タイムライン", "フォーカス · 上下：トラック選択 · 左右：イベント選択 · Ctrl/Cmd+ホイール：ズーム · ルーラー：シーク · Delete：選択を削除"],
 		]},
 	},
 	"ko": {
@@ -230,7 +230,7 @@ const CONTENT := {
 		]},
 		"timeline": {"title": "타임라인과 전투 타이밍", "summary": "고정 tick에 애니메이션, 히트박스, 이동, 연출, 오디오, VFX, 카메라, 게임 이벤트를 배치합니다.", "time": "8분", "action": "open_2d", "steps": [
 			["타임라인에서 작성", "유형을 선택하고 ‘재생 헤드에 추가’를 누릅니다. 호환 트랙을 재사용하고 없으면 자동 생성하며 빈 트랙도 추가할 수 있습니다."],
-			["정확히 이동", "눈금자를 눌러 이동하고 쉼표/마침표로 1 tick씩 이동합니다. 휠로 확대합니다."],
+			["정확히 이동", "눈금자를 클릭합니다. 타임라인에 포커스를 둔 뒤 위/아래로 트랙, 왼쪽/오른쪽으로 이벤트를 선택하고 쉼표/마침표로 1 tick씩 이동합니다."],
 			["이벤트 읽기", "색상은 고정 의미를 가집니다. 이벤트는 start_tick부터 end_tick을 포함해 활성화됩니다."],
 			["안전하게 수정", "이벤트 유형, 액터, 시간, JSON을 수정할 수 있고 이벤트/트랙 삭제는 실행 취소됩니다. Marker/Branch는 아직 .action.json을 사용합니다."],
 			["Take 비교", "Take 복제는 새 ID의 완전한 복사본을 만듭니다. A/B는 ID 차이를 무시하고 실제 시간/payload 차이만 보여줍니다."],
@@ -281,7 +281,7 @@ const CONTENT := {
 		"shortcuts": {"title": "키보드 단축키", "summary": "키보드로 핵심 리허설 흐름을 조작합니다.", "time": "1분", "action": "none", "steps": [
 			["재생", "Space: 재생/일시정지 · ,: 이전 tick · .: 다음 tick · R: 초기화 · C: A/B 전환"],
 			["편집", "Ctrl/Cmd+Z: 실행 취소 · Ctrl/Cmd+Shift+Z 또는 Ctrl+Y: 다시 실행 · Ctrl/Cmd+S: 저장"],
-			["타임라인", "휠: 확대 · 눈금자: 이동 · 이벤트: 검사 · 트랙 이름: 선택 · Delete: 선택 삭제"],
+			["타임라인", "포커스 · 위/아래: 트랙 선택 · 왼쪽/오른쪽: 이벤트 선택 · Ctrl/Cmd+휠: 확대 · 눈금자: 이동 · Delete: 선택 삭제"],
 		]},
 	},
 }

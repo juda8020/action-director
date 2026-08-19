@@ -222,7 +222,9 @@ Lifecycle API는 제한적입니다. Hitbox는 `hitbox_opened/closed`, Cancel wi
 | 실행 취소 | Ctrl/Cmd+Z |
 | 다시 실행 | Ctrl/Cmd+Shift+Z, Windows Ctrl+Y |
 | 저장 | Ctrl/Cmd+S |
-| Timeline 확대 | 휠 |
+| 타임라인 트랙 선택 | 타임라인 포커스 후 위/아래 방향키 |
+| 트랙 이벤트 선택 | 타임라인 포커스 후 왼쪽/오른쪽 방향키 |
+| Timeline 확대 | Ctrl/Cmd+휠 |
 | 이동 | 눈금자 클릭 |
 | Tutorial 스크롤 | Page Up/Down, Home, End |
 | Tutorial 닫기 | Escape |

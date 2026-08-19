@@ -41,12 +41,13 @@ func _initialize() -> void:
 	_test_complete_manuals()
 	_test_graphical_authoring_contract()
 	_test_graphical_authoring_controls()
+	_test_timeline_keyboard_navigation()
 	_test_inspector_blocks_invalid_action_edits()
 	_test_ui_hierarchy_states()
 	_test_duplicate_take_undo_redo()
 	_test_take_switch_rebinds_inspector_duration()
 	if failures.is_empty():
-		print("Action Director tests passed: 36/36")
+		print("Action Director tests passed: 37/37")
 		quit(0)
 	else:
 		for failure in failures:
@@ -633,6 +634,35 @@ func _test_graphical_authoring_controls() -> void:
 	inspector_panel._apply_changes()
 	_expect(int(observed.event.get("start_tick", -1)) == 10 and int(observed.event.get("end_tick", -1)) == 10, "Inspector must prevent event timing from exceeding the take duration.")
 	inspector_panel.free()
+
+
+func _test_timeline_keyboard_navigation() -> void:
+	var loaded := ActionSpecCodec.load_json("res://samples/actions/sword_strike.action.json")
+	var timeline := ActionTimelineView.new()
+	timeline.set_take(loaded.spec, "Take A")
+	get_root().add_child(timeline)
+	timeline._ready()
+	_expect(timeline.focus_mode == Control.FOCUS_ALL, "Timeline keyboard navigation must expose a real focus target for its visible focus state.")
+	var observed := {"track_id": "", "event_id": ""}
+	timeline.track_selected.connect(func(track: Dictionary): observed.track_id = String(track.get("id", "")))
+	timeline.event_selected.connect(func(event: Dictionary, track_id: String): observed.track_id = track_id; observed.event_id = String(event.get("id", "")))
+	var down := InputEventKey.new()
+	down.pressed = true
+	down.keycode = KEY_DOWN
+	timeline._gui_input(down)
+	_expect(observed.track_id != "" and timeline.selected_track_id == observed.track_id and timeline.selected_event_id == "", "Down Arrow must select a timeline track without requiring a mouse.")
+	var right := InputEventKey.new()
+	right.pressed = true
+	right.keycode = KEY_RIGHT
+	timeline._gui_input(right)
+	_expect(observed.event_id != "" and timeline.selected_event_id == observed.event_id, "Right Arrow must select an event on the active timeline track without requiring a mouse.")
+	timeline._gui_input(down)
+	_expect(timeline.selected_event_id == "", "Moving to another timeline track must clear the old event selection before keyboard inspection continues.")
+	timeline._gui_input(right)
+	var first_event_id := String(observed.event_id)
+	timeline._gui_input(right)
+	_expect(observed.event_id != first_event_id and timeline.selected_event_id == observed.event_id, "Repeated Right Arrow presses must move through events in tick order on the active track.")
+	timeline.free()
 
 
 func _test_inspector_blocks_invalid_action_edits() -> void:

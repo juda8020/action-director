@@ -73,6 +73,9 @@ Godot 4.7 stable is required.
 Open the sword or 3D charge sample from the left project panel. Space toggles
 playback, comma/period step one tick, R resets, and C toggles A/B comparison.
 Click an event on the timeline to inspect or edit it.
+Keyboard users can focus the timeline, move between tracks with Up/Down, and
+select events in the active track with Left/Right. The visible focus outline
+and selection summary remain available in every interface language.
 Choose an event type in the timeline toolbar, then add it at the playhead. The
 editor reuses a compatible selected track or creates one automatically. Click a
 track label to select the whole track; Delete Event and Delete Track remain

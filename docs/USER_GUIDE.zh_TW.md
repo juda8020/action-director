@@ -338,7 +338,9 @@ func _on_game_collision(event_id: String, blocked: bool) -> void:
 | 復原 | Ctrl/Cmd+Z |
 | 重做 | Ctrl/Cmd+Shift+Z，Windows 亦可 Ctrl+Y |
 | 儲存專案 | Ctrl/Cmd+S |
-| 時間軸縮放 | 滑鼠滾輪 |
+| 選取時間軸軌道 | 聚焦時間軸，再按上／下方向鍵 |
+| 選取軌道事件 | 聚焦時間軸，再按左／右方向鍵 |
+| 時間軸縮放 | Ctrl/Cmd+滑鼠滾輪 |
 | 時間軸定位 | 點擊時間尺 |
 | 檢查事件 | 點擊事件 |
 | 選取軌道 | 點擊軌道名稱 |

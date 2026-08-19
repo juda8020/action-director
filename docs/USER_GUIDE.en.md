@@ -313,7 +313,9 @@ Lifecycle support is intentionally specific: hitboxes have `hitbox_opened/closed
 | Undo | Ctrl/Cmd+Z |
 | Redo | Ctrl/Cmd+Shift+Z; Ctrl+Y on Windows |
 | Save project | Ctrl/Cmd+S |
-| Timeline zoom | Mouse wheel |
+| Select timeline track | Focus timeline, then Up/Down Arrow |
+| Select event in track | Focus timeline, then Left/Right Arrow |
+| Timeline zoom | Ctrl/Cmd+Mouse wheel |
 | Seek | Click ruler |
 | Inspect event | Click event |
 | Select track | Click track label |

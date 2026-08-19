@@ -222,7 +222,9 @@ Lifecycle APIは限定的です。Hitboxは`hitbox_opened/closed`、Cancel windo
 | Undo | Ctrl/Cmd+Z |
 | Redo | Ctrl/Cmd+Shift+Z、WindowsはCtrl+Y |
 | 保存 | Ctrl/Cmd+S |
-| Timeline Zoom | Wheel |
+| Timeline Track選択 | Timelineにフォーカス後、上下キー |
+| Track内Event選択 | Timelineにフォーカス後、左右キー |
+| Timeline Zoom | Ctrl/Cmd+Wheel |
 | Seek | Ruler click |
 | Tutorial scroll | Page Up/Down、Home、End |
 | Tutorial close | Escape |
