@@ -28,6 +28,7 @@ var compare_runtime: ActionDirectorPlayer
 
 var project_tree: Tree
 var take_tabs: TabBar
+var compare_take_picker: OptionButton
 var primary_stage_holder: PanelContainer
 var compare_stage_holder: PanelContainer
 var primary_stage: Control
@@ -295,6 +296,8 @@ func _build_center() -> Control:
 	var upper := VBoxContainer.new()
 	upper.add_theme_constant_override("separation", 6)
 	vertical.add_child(upper)
+	var take_stack := VBoxContainer.new()
+	take_stack.add_theme_constant_override("separation", 4)
 	var take_row := HBoxContainer.new()
 	var rehearsal_label := Label.new()
 	rehearsal_label.text = localization.text("rehearsal")
@@ -307,19 +310,33 @@ func _build_center() -> Control:
 	take_tabs.custom_minimum_size.x = 210
 	take_tabs.tab_changed.connect(_on_take_tab_changed)
 	take_row.add_child(take_tabs)
+	var compare_with_label := Label.new()
+	compare_with_label.text = localization.text("compare_with")
+	compare_with_label.add_theme_color_override("font_color", Color("aeb7c6"))
+	localized_controls["compare_with"] = compare_with_label
+	take_row.add_child(compare_with_label)
+	compare_take_picker = OptionButton.new()
+	compare_take_picker.custom_minimum_size.x = 150
+	compare_take_picker.tooltip_text = localization.text("tip_compare_take")
+	compare_take_picker.item_selected.connect(_on_compare_take_selected)
+	localized_tooltips["tip_compare_take"] = compare_take_picker
+	take_row.add_child(compare_take_picker)
+	take_row.add_spacer(false)
+	var duplicate_button := _localized_button("duplicate_take", _duplicate_current_take, "tip_duplicate_take")
+	take_row.add_child(duplicate_button)
+	take_stack.add_child(take_row)
+	var comparison_row := HBoxContainer.new()
 	comparison_label = Label.new()
 	comparison_label.text = localization.text("no_comparison")
-	comparison_label.custom_minimum_size.x = 315
 	comparison_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	comparison_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	comparison_label.add_theme_color_override("font_color", Color("c2cad7"))
-	take_row.add_child(comparison_label)
+	comparison_row.add_child(comparison_label)
 	difference_button = _localized_button("jump_to_difference", _jump_to_first_difference, "tip_jump_to_difference")
 	difference_button.disabled = true
-	take_row.add_child(difference_button)
-	var duplicate_button := _localized_button("duplicate_take", _duplicate_current_take, "tip_duplicate_take")
-	take_row.add_child(duplicate_button)
-	upper.add_child(take_row)
+	comparison_row.add_child(difference_button)
+	take_stack.add_child(comparison_row)
+	upper.add_child(take_stack)
 	var stage_split := HSplitContainer.new()
 	stage_split.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	stage_split.split_offset = 0
@@ -535,6 +552,7 @@ func _rebuild_workspace() -> void:
 	var active_index := spec.get_take_names().find(current_take_name)
 	if active_index >= 0:
 		take_tabs.current_tab = active_index
+	_populate_compare_take_picker()
 	_rebuild_stages()
 	timeline.set_take(spec, current_take_name)
 	timeline.clear_selection()
@@ -655,8 +673,7 @@ func _on_take_tab_changed(index: int) -> void:
 	if spec == null:
 		return
 	current_take_name = spec.get_take_names()[index]
-	var names := spec.get_take_names()
-	compare_take_name = names[(index + 1) % names.size()] if names.size() > 1 else current_take_name
+	_populate_compare_take_picker()
 	_set_tick(0)
 	selected_track_id = ""
 	selected_event_id = ""
@@ -668,6 +685,18 @@ func _on_take_tab_changed(index: int) -> void:
 	_update_workspace_context()
 	_update_timeline_selection()
 	_update_comparison_summary()
+
+
+func _on_compare_take_selected(index: int) -> void:
+	if spec == null or compare_take_picker == null or index < 0 or index >= compare_take_picker.item_count:
+		return
+	var selected_take := String(compare_take_picker.get_item_metadata(index))
+	if selected_take == "" or selected_take == current_take_name or selected_take not in spec.get_take_names():
+		return
+	compare_take_name = selected_take
+	_rebuild_stages()
+	_update_comparison_summary()
+	_set_status(localization.text("comparison_changed", [current_take_name, compare_take_name]))
 
 
 func _update_comparison_summary() -> void:
@@ -1183,6 +1212,35 @@ func _populate_event_type_picker() -> void:
 			event_type_picker.select(event_type_picker.item_count - 1)
 
 
+func _populate_compare_take_picker() -> void:
+	if compare_take_picker == null:
+		return
+	compare_take_picker.clear()
+	if spec == null:
+		compare_take_picker.disabled = true
+		return
+	var names := spec.get_take_names()
+	if compare_take_name not in names or compare_take_name == current_take_name:
+		compare_take_name = current_take_name
+		for name: String in names:
+			if name != current_take_name:
+				compare_take_name = name
+				break
+	for name: String in names:
+		if name == current_take_name:
+			continue
+		compare_take_picker.add_item(name)
+		compare_take_picker.set_item_metadata(compare_take_picker.item_count - 1, name)
+		if name == compare_take_name:
+			compare_take_picker.select(compare_take_picker.item_count - 1)
+	if compare_take_picker.item_count == 0:
+		compare_take_picker.add_item(localization.text("no_compare_take"))
+		compare_take_picker.set_item_metadata(0, "")
+		compare_take_picker.disabled = true
+	else:
+		compare_take_picker.disabled = false
+
+
 func _on_language_selected(index: int) -> void:
 	var locale := String(language_picker.get_item_metadata(index))
 	localization.set_locale(locale)
@@ -1211,6 +1269,7 @@ func _apply_locale() -> void:
 	if language_picker != null:
 		language_picker.tooltip_text = localization.text("language")
 	_populate_event_type_picker()
+	_populate_compare_take_picker()
 	if inspector != null:
 		inspector.set_localization(localization)
 	if timeline != null:

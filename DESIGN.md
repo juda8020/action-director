@@ -36,7 +36,10 @@ The desktop composition is fixed by job: project/material hierarchy left,
 paired rehearsal center, current-event inspector right, transport above, and
 multitrack timeline below. Panels may resize, but none become floating cards.
 The transport uses two compact rows: persistent workspace identity above and
-file/history/playback commands below. Primary and comparison stages retain
+file/history/playback commands below. The rehearsal header keeps primary Take
+tabs and an explicit comparison-Take selector above the difference summary so
+longer localized labels do not compete with the stage width. Primary and
+comparison stages retain
 green and amber identities in both 2D and 3D, while the timeline names the
 current selection before exposing contextual destructive actions. An empty
 Inspector teaches the selection path instead of showing inactive edit fields.

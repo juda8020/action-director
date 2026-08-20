@@ -24,8 +24,9 @@ and update requirements are documented in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 - A real 2D eight-frame sword spritesheet demo and a real 3D skeletal FBX
   motion demo, both bundled with redistributable sample assets.
-- A/B split rehearsal, frame stepping, locked playhead, and first-difference
-  summary.
+- A/B split rehearsal with an explicit comparison Take selector, frame
+  stepping, locked playhead, and first-difference summary. Projects with three
+  or more Takes can compare any pair instead of only adjacent versions.
 - Complete take duplication with fresh take, track, event, branch, and marker
   IDs so variants remain independent and version-safe.
 - Multitrack timeline authoring for animation, windows, hitboxes, hurtboxes,
@@ -72,6 +73,8 @@ Godot 4.7 stable is required.
 
 Open the sword or 3D charge sample from the left project panel. Space toggles
 playback, comma/period step one tick, R resets, and C toggles A/B comparison.
+Choose the primary Take tab, then use **Compare with** to select any other Take
+for the synchronized stage and first-difference summary.
 Click an event on the timeline to inspect or edit it.
 Keyboard users can focus the timeline, move between tracks with Up/Down, and
 select events in the active track with Left/Right. The visible focus outline

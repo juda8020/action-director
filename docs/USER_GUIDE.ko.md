@@ -153,10 +153,11 @@ Alpha는 외부 파일 변경을 감시하지 않습니다. Text 편집 후 JSON
 
 1. 정상적으로 끝나는 기준 Take를 만듭니다.
 2. **Take 복제**로 독립 버전을 만듭니다.
-3. “반응 가능한가?”, “충격이 충분히 무거운가?”처럼 질문 하나를 정합니다.
-4. 한 번에 관련 변수만 수정합니다: startup/speed, motion/hitbox, hit stop/shake, recovery/cancel.
-5. 같은 시작 조건으로 재생하고 첫 차이, 전체 길이, 이동, active, cancel을 확인합니다.
-6. 선택하지 않은 Take도 검토와 롤백을 위해 남깁니다.
+3. 기준 Take 탭을 선택하고 **비교 대상**에서 원하는 다른 Take를 지정합니다. Take가 3개 이상이어도 다음 탭만 비교하도록 제한되지 않습니다.
+4. “반응 가능한가?”, “충격이 충분히 무거운가?”처럼 질문 하나를 정합니다.
+5. 한 번에 관련 변수만 수정합니다: startup/speed, motion/hitbox, hit stop/shake, recovery/cancel.
+6. 같은 시작 조건으로 재생하고 첫 차이, 전체 길이, 이동, active, cancel을 확인합니다.
+7. 선택하지 않은 Take도 검토와 롤백을 위해 남깁니다.
 
 내장 검격은 방법 예시일 뿐 밸런스 추천이 아닙니다. Take A는 72 ticks, Take B는 60 ticks이며 B가 더 빠르고 멀리 이동하고 강한 shake와 block-recovery 분기를 가집니다.
 

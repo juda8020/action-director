@@ -51,7 +51,7 @@ const CONTENT := {
 			["Build a 3D charge", "Drive authoritative movement with a motion track, open a chest-anchored box hitbox, and place hit stop and shake at contact."],
 			["Stage charged actions", "Pass charge_tier in the play context and branch forward to different hitbox, VFX, and recovery sections."],
 			["Handle boss outcomes", "Use hit, block, and miss paths for different reactions while damage and AI remain in the host game."],
-			["Review one question at a time", "Name the question, change one connected parameter group, rehearse both takes, and record the timing difference before choosing."],
+			["Review one question at a time", "Choose the primary Take tab and any other version in Compare with, change one connected parameter group, then record the timing difference before choosing."],
 		]},
 		"godot": {"title": "Export and play in Godot", "summary": "Move the same ActionSpec from rehearsal into an existing Godot 4.7 game.", "time": "10 min", "action": "none", "steps": [
 			["Export the source", "Export .action.json. Keep JSON as the source of truth; .tres is a generated cache."],
@@ -121,7 +121,7 @@ const CONTENT := {
 			["製作 3D 衝撞", "用 motion 軌道推進真正角色位置，在胸口錨點開啟 box hitbox，並在接觸 tick 放 hit stop 與震動。"],
 			["製作蓄力技能", "從 play context 傳入 charge_tier，向後分支到不同攻擊框、VFX 與後搖區段。"],
 			["設計 Boss 結果反應", "讓 hit、block、miss 走不同演出路徑，但傷害與 AI 仍留在遊戲端。"],
-			["一次回答一個問題", "先寫清楚要驗證的問題，只改一組相關參數，重播兩個 Take，記錄時序差異後再選版本。"],
+			["一次回答一個問題", "先選主要 Take 分頁，再從「比較對象」指定任一其他版本；只改一組相關參數，重播並記錄時序差異後再選版本。"],
 		]},
 		"godot": {"title": "匯出並在 Godot 播放", "summary": "把預演用的同一份 ActionSpec 接到既有 Godot 4.7 遊戲。", "time": "10 分鐘", "action": "none", "steps": [
 			["匯出來源", "匯出 .action.json。JSON 是正式來源，.tres 只是可重新產生的快取。"],
@@ -191,7 +191,7 @@ const CONTENT := {
 			["3D突進を作る", "Motionで実Bodyを動かし、胸AnchorのBox hitboxと接触時hit stop／shakeを配置します。"],
 			["Chargeを分岐", "Play contextのcharge_tierから異なるHitbox、VFX、Recovery区間へ前進分岐します。"],
 			["Boss結果を演出", "hit、block、missを別経路へ送り、DamageとAIはHost gameに残します。"],
-			["質問を1つずつ検証", "目的を命名し、関連Parameter群だけ変え、両Takeを再生して時刻差を記録します。"],
+			["質問を1つずつ検証", "Primary Takeタブと「比較対象」で任意の別Takeを選び、関連Parameter群だけ変えて時刻差を記録します。"],
 		]},
 		"godot": {"title": "Godotへ書き出して再生", "summary": "同じActionSpecを既存のGodot 4.7ゲームへ接続します。", "time": "10分", "action": "none", "steps": [
 			["ソースを書き出す", ".action.jsonを書き出します。JSONが正本で、.tresは再生成可能なキャッシュです。"],
@@ -261,7 +261,7 @@ const CONTENT := {
 			["3D 돌진 제작", "Motion으로 실제 body를 이동하고 가슴 anchor Box hitbox와 접촉 시 hit stop/shake를 배치합니다."],
 			["차지 액션 분기", "Play context의 charge_tier에서 서로 다른 Hitbox, VFX, Recovery 구간으로 앞으로 분기합니다."],
 			["Boss 결과 연출", "hit, block, miss를 다른 경로로 보내되 피해와 AI는 host game에 남깁니다."],
-			["질문 하나씩 검증", "검증할 질문을 정하고 관련 변수만 변경한 뒤 두 Take의 시간 차이를 기록합니다."],
+			["질문 하나씩 검증", "기준 Take 탭과 ‘비교 대상’에서 원하는 다른 Take를 고르고 관련 변수만 바꾼 뒤 시간 차이를 기록합니다."],
 		]},
 		"godot": {"title": "Godot에서 내보내고 재생", "summary": "같은 ActionSpec을 기존 Godot 4.7 게임에 연결합니다.", "time": "10분", "action": "none", "steps": [
 			["원본 내보내기", ".action.json을 내보냅니다. JSON이 원본이고 .tres는 다시 만들 수 있는 캐시입니다."],

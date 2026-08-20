@@ -212,15 +212,16 @@ The Alpha does not watch external file changes. Reopen the JSON after each text 
 
 1. Build one valid baseline take.
 2. Duplicate it to create an independent version.
-3. Write one comparison question: “Is this reactable?” or “Does impact feel heavy enough?”
-4. Change one connected parameter group:
+3. Select the primary Take tab, then choose any other version from **Compare with**. The comparison is not limited to the next tab when the project has three or more Takes.
+4. Write one comparison question: “Is this reactable?” or “Does impact feel heavy enough?”
+5. Change one connected parameter group:
    - Responsiveness: startup and animation speed.
    - Reach: motion delta and hitbox position/size.
    - Impact: hit stop, shake, audio, and VFX timing.
    - Risk: recovery and cancel window.
-5. Rehearse from the same start and input.
-6. Inspect first difference, total duration, displacement, active timing, and cancellation—not only spectacle.
-7. Preserve the alternative take for review and rollback.
+6. Rehearse from the same start and input.
+7. Inspect first difference, total duration, displacement, active timing, and cancellation—not only spectacle.
+8. Preserve the alternative take for review and rollback.
 
 The built-in sword action provides an example, not a balance recommendation. Take A lasts 72 ticks; Take B lasts 60, attacks earlier, lunges farther, shakes harder, and has a block branch to recovery.
 

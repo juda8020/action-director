@@ -153,10 +153,11 @@ Alphaは外部File変更を監視しません。Text編集ごとにJSONを再度
 
 1. 正常に完走する基準Takeを作ります。
 2. 「Take複製」で独立案を作ります。
-3. 「反応可能か」「命中が重く見えるか」など質問を1つ決めます。
-4. 1回の比較では関連項目だけ変更します：startup／speed、motion／hitbox、hit stop／shake、recovery／cancel。
-5. 同じ開始条件で再生し、最初の差分、総長、移動量、active、cancelを見ます。
-6. 選ばなかったTakeもレビュー・巻戻し用に残します。
+3. Primary Takeタブを選び、「比較対象」から任意の別Takeを指定します。Takeが3つ以上でも次のタブだけに制限されません。
+4. 「反応可能か」「命中が重く見えるか」など質問を1つ決めます。
+5. 1回の比較では関連項目だけ変更します：startup／speed、motion／hitbox、hit stop／shake、recovery／cancel。
+6. 同じ開始条件で再生し、最初の差分、総長、移動量、active、cancelを見ます。
+7. 選ばなかったTakeもレビュー・巻戻し用に残します。
 
 内蔵剣撃は方法例で、Balance推奨値ではありません。Take Aは72 ticks、Take Bは60 ticksで、Bは早く、遠く、強いshakeを持ち、block時にrecoveryへ分岐します。
 

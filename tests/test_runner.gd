@@ -42,12 +42,13 @@ func _initialize() -> void:
 	_test_graphical_authoring_contract()
 	_test_graphical_authoring_controls()
 	_test_timeline_keyboard_navigation()
+	_test_explicit_compare_take_selection()
 	_test_inspector_blocks_invalid_action_edits()
 	_test_ui_hierarchy_states()
 	_test_duplicate_take_undo_redo()
 	_test_take_switch_rebinds_inspector_duration()
 	if failures.is_empty():
-		print("Action Director tests passed: 37/37")
+		print("Action Director tests passed: 38/38")
 		quit(0)
 	else:
 		for failure in failures:
@@ -663,6 +664,45 @@ func _test_timeline_keyboard_navigation() -> void:
 	timeline._gui_input(right)
 	_expect(observed.event_id != first_event_id and timeline.selected_event_id == observed.event_id, "Repeated Right Arrow presses must move through events in tick order on the active track.")
 	timeline.free()
+
+
+func _test_explicit_compare_take_selection() -> void:
+	var app := AppScript.new()
+	app._ready()
+	var third := TakeUtils.duplicate_take(app.spec.get_take("Take A"), app.spec.get_take_names())
+	third.name = "Take C"
+	var names_with_third := app.spec.get_take_names()
+	names_with_third.append("Take C")
+	var fourth := TakeUtils.duplicate_take(app.spec.get_take("Take B"), names_with_third)
+	fourth.name = "Take D"
+	app.spec.data.takes.append(third)
+	app.spec.data.takes.append(fourth)
+	app.current_take_name = "Take A"
+	app.compare_take_name = "Take B"
+	app._rebuild_workspace()
+	_expect(app.compare_take_picker != null and app.compare_take_picker.item_count == 3, "A multi-take action must offer every non-primary Take as an explicit comparison target.")
+	var take_d_index := -1
+	if app.compare_take_picker != null:
+		for index in app.compare_take_picker.item_count:
+			if String(app.compare_take_picker.get_item_metadata(index)) == "Take D":
+				take_d_index = index
+				break
+	_expect(take_d_index >= 0, "The comparison picker must include non-adjacent Takes instead of forcing the next tab.")
+	if take_d_index >= 0:
+		app.compare_take_picker.select(take_d_index)
+		app._on_compare_take_selected(take_d_index)
+		_expect(app.compare_take_name == "Take D" and app.compare_stage.take_name == "Take D", "Choosing a comparison Take must rebind the visible comparison stage to that exact Take.")
+		app._on_take_tab_changed(3)
+		_expect(app.current_take_name == "Take D" and app.compare_take_name != "Take D", "The comparison target must remain distinct when its Take becomes primary.")
+	var single_take_3d := ActionSpecCodec.load_json("res://samples/actions/charge_3d.action.json")
+	app.spec = single_take_3d.spec
+	app.current_take_name = "Default"
+	app.compare_take_name = "Default"
+	app._populate_compare_take_picker()
+	_expect(app.compare_take_picker.item_count == 1 and app.compare_take_picker.disabled and String(app.compare_take_picker.get_item_metadata(0)) == "" and app.compare_take_name == app.current_take_name, "A one-Take 3D action must show a disabled empty comparison state without inventing another version.")
+	app.undo_redo.free()
+	app.undo_redo = null
+	app.free()
 
 
 func _test_inspector_blocks_invalid_action_edits() -> void:

@@ -43,7 +43,8 @@ hitboxes, motion, feel, camera, and game events share one reviewable contract.
 - The 2D sample bundles an original CC0 eight-frame sword spritesheet and
   advances its declared cells from the same fixed-tick timeline used by events.
 - Rehearse a 2D or 3D action; a project never mixes coordinate dimensions.
-- Compare complete Take A and Take B copies with identical starting input.
+- Compare any two complete Take copies with identical starting input, including
+  non-adjacent versions in projects with three or more Takes.
 - Export `.action.json` as source of truth and optionally cache it as a Godot
   `.tres` resource through the runtime addon.
 - Keep unpublished game assets local. The application has no account,
