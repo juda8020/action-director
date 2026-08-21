@@ -80,7 +80,7 @@ The formal portable action. Commit this file to version control and treat it as 
 
 ### Autosave and recovery
 
-The editor writes a recovery ActionSpec every 30 seconds. After an abnormal exit, choose Recover, inspect the content, and immediately save/export to normal project paths. Recovery is not a replacement for source control.
+Every 30 seconds, the editor saves a recovery workspace containing the embedded ActionSpec, primary and comparison Takes, A/B visibility, and playhead tick. After an abnormal exit, Recover resumes that exact review position. Inspect it, then immediately save and export to normal project paths. Recovery is not a replacement for source control. Older action-only recovery files remain readable.
 
 Recommended layout:
 
@@ -334,7 +334,7 @@ Lifecycle support is intentionally specific: hitboxes have `hitbox_opened/closed
 - **Audio is silent:** verify WAV/OGG import and match the event `asset_key`.
 - **Branch does not run:** report the result before `at_tick`, use a later target marker, and check condition/context values.
 - **Original action moved:** open the `.adproject` embedded recovery copy, then export again and relocate external assets.
-- **Abnormal exit:** choose Recover, inspect the 30-second autosave, then save it normally.
+- **Abnormal exit:** choose Recover to resume the 30-second workspace autosave at its saved Take pair, A/B state, and playhead, then save and export it to normal paths.
 
 ## 17. Alpha boundaries
 

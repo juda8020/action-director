@@ -29,7 +29,7 @@ const CONTENT := {
 			["Save the workspace", ".adproject stores project data, the asset index, an embedded ActionSpec recovery copy, and the active Take pair, A/B visibility, and playhead tick. Save it before importing assets so relative paths are stable."],
 			["Export the source of truth", ".action.json is the portable, version-control-friendly contract. Generated .action.tres files are caches, never the only source."],
 			["Keep the folder together", "Store the .adproject, actions, and assets under one project folder. Relocate missing assets instead of deleting their tracks."],
-			["Recover deliberately", "Recover opens the 30-second autosave. Inspect it, then immediately save and export to normal paths; autosave does not replace Git."],
+			["Recover deliberately", "Recover resumes the 30-second workspace autosave with its Take pair, A/B state, and playhead. Inspect it, then immediately save and export to normal paths; autosave does not replace Git."],
 		]},
 		"mixamo": {"title": "Import a Mixamo character", "summary": "Bring a skinned FBX directly into the 3D rehearsal stage with Godot UFBX.", "time": "6 min", "action": "open_3d", "steps": [
 			["Try the bundled compatibility demo", "Open 3D FBX Demo to see a real CC0 humanoid, skeleton, mesh, and eleven animation clips playing through the same UFBX path. It is redistributable and is not a Mixamo asset."],
@@ -66,7 +66,7 @@ const CONTENT := {
 			["FBX has no animation", "Download again from Mixamo as FBX Binary. For a combined character, use With Skin. Motion-only files need a compatible retarget workflow."],
 			["Model is too large or rotated", "This Alpha preserves imported transforms. Correct source scale/orientation in the DCC or use Mixamo defaults before import."],
 			["Original action moved", "Open the .adproject; it contains an embedded ActionSpec recovery copy. Relocate external assets instead of deleting their tracks."],
-			["Crash recovery", "Choose Recover to open the 30-second autosave, then immediately save/export it to a normal project path."],
+			["Crash recovery", "Choose Recover to resume the 30-second workspace autosave at its saved Take pair, A/B state, and playhead, then immediately save/export it to a normal project path."],
 		]},
 		"shortcuts": {"title": "Keyboard reference", "summary": "Operate the core rehearsal loop without leaving the keyboard.", "time": "1 min", "action": "none", "steps": [
 			["Playback", "Space: play/pause · Comma: previous tick · Period: next tick · R: reset · C: A/B on/off"],
@@ -99,7 +99,7 @@ const CONTENT := {
 			["保存工作區", ".adproject 保存專案資料、素材索引、內嵌 ActionSpec 復原副本，以及主要／比較 Take、A／B 顯示狀態與播放 tick。匯入素材前先儲存，才能建立穩定相對路徑。"],
 			["匯出正式來源", ".action.json 是可攜、適合版本控制的正式契約；.action.tres 是可重建快取，不能作為唯一來源。"],
 			["整個資料夾一起管理", "把 .adproject、actions 與 assets 放在同一專案資料夾；素材遺失時重新定位，不要刪除軌道。"],
-			["正確使用復原", "「復原」會開啟每 30 秒自動存檔。確認內容後立刻保存並匯出到正常路徑；自動存檔不能取代 Git。"],
+			["正確使用復原", "「復原」會續接每 30 秒建立的工作區自動存檔，還原 Take 配對、A／B 狀態與播放頭。確認後立刻保存並匯出到正常路徑；自動存檔不能取代 Git。"],
 		]},
 		"mixamo": {"title": "匯入 Mixamo 角色", "summary": "透過 Godot UFBX，把帶骨架的 FBX 直接放進 3D 預演舞台。", "time": "6 分鐘", "action": "open_3d", "steps": [
 			["先試內附相容範例", "開啟「3D FBX 範例」，即可看到真實 CC0 雙足角色、骨架、網格與 11 段動畫透過同一條 UFBX 路徑播放。它可合法再散布，不是 Mixamo 素材。"],
@@ -136,7 +136,7 @@ const CONTENT := {
 			["FBX 沒有動畫", "從 Mixamo 重新下載 FBX Binary；合併角色請選 With Skin。只有動作的 FBX 需要相容骨架／retarget 流程。"],
 			["模型太大或方向錯誤", "Alpha 會保留匯入 Transform；請在 DCC 修正尺度與方向，或以 Mixamo 預設重新下載。"],
 			["原始動作被移動", "直接開啟 .adproject，它內嵌 ActionSpec 復原副本；遺失外部素材時重新定位，不要刪除軌道。"],
-			["崩潰復原", "按「復原」開啟每 30 秒自動存檔，接著立刻存到正常專案路徑。"],
+			["崩潰復原", "按「復原」續接每 30 秒的工作區自動存檔與審核位置，接著立刻存到正常專案路徑。"],
 		]},
 		"shortcuts": {"title": "鍵盤快捷鍵", "summary": "不離開鍵盤完成核心預演循環。", "time": "1 分鐘", "action": "none", "steps": [
 			["播放", "Space：播放／暫停 · 逗號：前一 tick · 句點：下一 tick · R：重設 · C：A/B 開關"],
@@ -169,7 +169,7 @@ const CONTENT := {
 			["Workspaceを保存", ".adprojectはProject情報、Asset索引、埋込ActionSpecに加え、Primary／比較Take、A/B表示状態、Playhead tickを保存します。Asset読込前に保存して相対Pathを安定させます。"],
 			["正式Sourceを書出", ".action.jsonがVersion control用の正本で、.action.tresは再生成可能なCacheです。"],
 			["Folderごと管理", ".adproject、actions、assetsを同じProject folderへ置き、Missing AssetはTrackを消さず再配置します。"],
-			["復元を確定保存", "復元は30秒Autosaveを開きます。内容確認後すぐ通常Pathへ保存・書出し、Gitの代用にはしません。"],
+			["復元を確定保存", "復元は30秒ごとのWorkspace AutosaveをTakeペア、A/B状態、再生ヘッドと共に再開します。確認後すぐ通常Pathへ保存・書出し、Gitの代用にはしません。"],
 		]},
 		"mixamo": {"title": "Mixamoキャラクターを読み込む", "summary": "Godot UFBXでスキン付きFBXを3Dリハーサルへ直接読み込みます。", "time": "6分", "action": "open_3d", "steps": [
 			["付属互換デモを試す", "「3D FBXデモ」で、実際のCC0ヒューマノイド、Skeleton、Mesh、11個のAnimation Clipを同じUFBX経路で確認できます。再配布可能であり、Mixamo素材ではありません。"],
@@ -206,7 +206,7 @@ const CONTENT := {
 			["FBXにアニメーションがない", "MixamoからFBX Binaryで再取得し、統合キャラクターはWith Skinにします。モーションのみは互換骨格が必要です。"],
 			["サイズや向きが違う", "Alphaは読込Transformを保持します。DCCで修正するかMixamo既定値で再取得してください。"],
 			["元アクションを移動した", ".adprojectにはActionSpec復元コピーがあります。外部素材はトラックを消さず再配置します。"],
-			["クラッシュ復元", "「復元」で30秒自動保存を開き、すぐ通常のプロジェクトパスへ保存／書き出します。"],
+			["クラッシュ復元", "「復元」で30秒ごとのWorkspace Autosaveと保存済みレビュー位置を再開し、すぐ通常のプロジェクトパスへ保存／書き出します。"],
 		]},
 		"shortcuts": {"title": "キーボード操作", "summary": "キーボードだけで中心的なリハーサルを行います。", "time": "1分", "action": "none", "steps": [
 			["再生", "Space：再生／一時停止 · ,：前tick · .：次tick · R：リセット · C：A/B切替"],
@@ -239,7 +239,7 @@ const CONTENT := {
 			["작업공간 저장", ".adproject는 프로젝트 정보, Asset 색인, 내장 ActionSpec과 함께 기본/비교 Take, A/B 표시 상태, playhead tick을 저장합니다. 에셋 가져오기 전에 저장해 상대 경로를 고정합니다."],
 			["공식 원본 내보내기", ".action.json이 버전 관리용 원본이며 .action.tres는 다시 만들 수 있는 캐시입니다."],
 			["폴더 전체 관리", ".adproject, actions, assets를 같은 프로젝트 폴더에 두고 누락 Asset은 Track을 지우지 말고 다시 지정합니다."],
-			["복구 후 정상 저장", "복구는 30초 autosave를 엽니다. 확인 후 즉시 정상 위치로 저장·내보내며 Git 대용으로 사용하지 않습니다."],
+			["복구 후 정상 저장", "복구는 30초 작업공간 autosave를 Take 쌍, A/B 상태, 재생 헤드와 함께 이어서 엽니다. 확인 후 즉시 정상 위치로 저장·내보내며 Git 대용으로 사용하지 않습니다."],
 		]},
 		"mixamo": {"title": "Mixamo 캐릭터 가져오기", "summary": "Godot UFBX로 스킨 FBX를 3D 리허설 무대에 직접 불러옵니다.", "time": "6분", "action": "open_3d", "steps": [
 			["내장 호환 데모 체험", "3D FBX 데모를 열어 실제 CC0 휴머노이드, 스켈레톤, 메시, 11개 애니메이션 클립을 같은 UFBX 경로에서 확인하세요. 재배포 가능하며 Mixamo 자산이 아닙니다."],
@@ -276,7 +276,7 @@ const CONTENT := {
 			["FBX에 애니메이션 없음", "Mixamo에서 FBX Binary로 다시 받고 통합 캐릭터는 With Skin을 사용합니다. 모션 전용은 호환 골격이 필요합니다."],
 			["크기나 방향 오류", "Alpha는 가져온 Transform을 유지합니다. DCC에서 수정하거나 Mixamo 기본값으로 다시 받으세요."],
 			["원본 액션 이동", ".adproject에는 ActionSpec 복구본이 있습니다. 외부 에셋은 트랙을 지우지 말고 다시 지정합니다."],
-			["충돌 복구", "‘복구’로 30초 자동 저장을 연 뒤 정상 프로젝트 경로로 즉시 저장/내보냅니다."],
+			["충돌 복구", "‘복구’로 30초 작업공간 자동 저장과 저장된 검토 위치를 이어서 연 뒤 정상 프로젝트 경로로 즉시 저장/내보냅니다."],
 		]},
 		"shortcuts": {"title": "키보드 단축키", "summary": "키보드로 핵심 리허설 흐름을 조작합니다.", "time": "1분", "action": "none", "steps": [
 			["재생", "Space: 재생/일시정지 · ,: 이전 tick · .: 다음 tick · R: 초기화 · C: A/B 전환"],

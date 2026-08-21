@@ -58,7 +58,8 @@ and update requirements are documented in [CONTRIBUTING.md](CONTRIBUTING.md).
   recoverable fallback); matching WAV or OGG events play during rehearsal.
 - `.adproject` workspace save with safe replacement, recovery backup, and the
   active Take pair, A/B visibility, and playhead restored on reopen.
-- Thirty-second action autosave and explicit recovery.
+- Thirty-second workspace recovery restores the active Take pair, A/B visibility,
+  and playhead; older action-only autosaves remain readable.
 - `ActionSpec`, `ActionDirectorPlayer`, 2D/3D actor adapters, camera adapter,
   audio/VFX adapter, and JSON-to-TRES cache utility.
 - Forward-only conditional branches and automatic miss fallback.

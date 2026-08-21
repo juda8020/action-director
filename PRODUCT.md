@@ -75,6 +75,9 @@ hitboxes, motion, feel, camera, and game events share one reviewable contract.
 - A searchable offline complete guide ships in all four interface languages and
   explains product purpose, files, track semantics, practical applications,
   Godot ownership boundaries, collaboration, and recovery.
+- The 30-second crash-recovery workspace restores the active Take pair, A/B
+  visibility, and playhead without binding the internal recovery file as the
+  user's normal project path. Older action-only autosaves remain readable.
 
 ## Evidence on Hand
 

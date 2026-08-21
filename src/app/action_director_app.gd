@@ -8,7 +8,8 @@ extends Control
 
 const SAMPLE_2D := "res://samples/actions/sword_strike.action.json"
 const SAMPLE_3D := "res://samples/actions/charge_3d.action.json"
-const AUTOSAVE_PATH := "user://recovery.action.json"
+const AUTOSAVE_PATH := "user://recovery.adproject"
+const LEGACY_AUTOSAVE_PATH := "user://recovery.action.json"
 const SETTINGS_PATH := "user://action_director_settings.json"
 
 var spec: ActionSpec
@@ -498,11 +499,11 @@ func _file_dialog(mode: FileDialog.FileMode, filters: PackedStringArray) -> File
 	return dialog
 
 
-func _open_action(path: String) -> void:
+func _open_action(path: String) -> bool:
 	var loaded := ActionSpecCodec.load_json(path)
 	if not loaded.ok:
 		_set_status(localization.text("open_failed", [String(loaded.get("error", ""))]), true)
-		return
+		return false
 	spec = loaded.spec
 	action_path = path
 	project_data = ActionProjectStore.create_from_action(path, spec.data)
@@ -514,6 +515,7 @@ func _open_action(path: String) -> void:
 	var warning_count: int = loaded.validation.warnings.size()
 	var warning_text := localization.text("compatibility_warnings", [warning_count]) if warning_count else ""
 	_set_status(localization.text("action_opened", [spec.data.get("name", spec.action_id), warning_text]))
+	return true
 
 
 func _open_file(path: String) -> void:
@@ -523,11 +525,11 @@ func _open_file(path: String) -> void:
 		_open_action(path)
 
 
-func _open_project(path: String) -> void:
+func _open_project(path: String) -> bool:
 	var loaded := ActionProjectStore.load_project(path)
 	if not loaded.ok:
 		_set_status(_localized_error(loaded), true)
-		return
+		return false
 	project_data = loaded.project
 	project_path = path
 	action_path = String(project_data.get("action_source", ""))
@@ -550,6 +552,7 @@ func _open_project(path: String) -> void:
 	_set_tick(maxi(0, int(workspace.get("preview_tick", 0))))
 	var source_note := "" if action_path == "" or FileAccess.file_exists(action_path) else localization.text("project_source_missing")
 	_set_status(localization.text("project_opened", [project_data.get("name", path.get_file()), source_note]))
+	return true
 
 
 func _rebuild_workspace() -> void:
@@ -1117,19 +1120,25 @@ func _save_project() -> void:
 
 func _write_project(path: String) -> void:
 	project_path = path
-	project_data.action_source = action_path
-	project_data.action_data = spec.data.duplicate(true)
-	project_data.assets = spec.data.get("assets", []).duplicate(true)
-	var workspace_value: Variant = project_data.get("workspace", {})
+	project_data = _project_snapshot()
+	var result := ActionProjectStore.save_project(project_data, path)
+	var save_message := localization.text("saved_project", [localization.text("saved_backup") if result.get("backup", "") != "" else ""]) if result.ok else _localized_error(result)
+	_set_status(save_message, not result.ok)
+
+
+func _project_snapshot() -> Dictionary:
+	var snapshot := project_data.duplicate(true)
+	snapshot.action_source = action_path
+	snapshot.action_data = spec.data.duplicate(true)
+	snapshot.assets = spec.data.get("assets", []).duplicate(true)
+	var workspace_value: Variant = snapshot.get("workspace", {})
 	var workspace: Dictionary = workspace_value.duplicate(true) if workspace_value is Dictionary else {}
 	workspace["current_take"] = current_take_name
 	workspace["compare_take"] = compare_take_name
 	workspace["compare_enabled"] = compare_enabled
 	workspace["preview_tick"] = current_tick
-	project_data["workspace"] = workspace
-	var result := ActionProjectStore.save_project(project_data, path)
-	var save_message := localization.text("saved_project", [localization.text("saved_backup") if result.get("backup", "") != "" else ""]) if result.ok else _localized_error(result)
-	_set_status(save_message, not result.ok)
+	snapshot["workspace"] = workspace
+	return snapshot
 
 
 func _export_action(path: String) -> void:
@@ -1146,17 +1155,21 @@ func _autosave() -> void:
 	_last_autosave_msec = Time.get_ticks_msec()
 	if spec == null:
 		return
-	var file := FileAccess.open(AUTOSAVE_PATH, FileAccess.WRITE)
-	if file != null:
-		file.store_string(JSON.stringify(spec.data, "\t", false, true) + "\n")
+	ActionProjectStore.save_project(_project_snapshot(), AUTOSAVE_PATH)
 
 
 func _recover_autosave() -> void:
-	if not FileAccess.file_exists(AUTOSAVE_PATH):
-		_set_status(localization.text("no_recovery"), true)
+	if FileAccess.file_exists(AUTOSAVE_PATH):
+		if _open_project(AUTOSAVE_PATH):
+			project_path = ""
+			_set_status(localization.text("recovered_workspace"))
 		return
-	_open_action(AUTOSAVE_PATH)
-	_set_status(localization.text("recovered"))
+	if FileAccess.file_exists(LEGACY_AUTOSAVE_PATH):
+		if _open_action(LEGACY_AUTOSAVE_PATH):
+			project_path = ""
+			_set_status(localization.text("recovered_legacy"))
+		return
+	_set_status(localization.text("no_recovery"), true)
 
 
 func _max_preview_duration() -> int:

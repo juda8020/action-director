@@ -65,7 +65,7 @@ Trackは用途別にEventを整理します。Runtimeは見た目の推測では
 
 - **`.adproject`**：編集用ワークスペース。プロジェクト情報、Asset索引、埋込ActionSpec復元コピーに加え、Primary Take、比較Take、A/B表示状態、Playhead tickを保持します。再度開くと同じレビュー位置へ戻ります。外部Asset読込前に保存してください。
 - **`.action.json`**：Godot連携とGitレビューの正式ソース。生成`.tres`だけを正本にしないでください。
-- **自動保存**：30秒ごとに復元ActionSpecを保存します。異常終了後は「復元」で開き、内容確認後すぐ通常Pathへ保存します。
+- **自動保存**：30秒ごとに埋込ActionSpec、Primary／比較Take、A/B表示状態、Playhead tickを含む復元Workspaceを保存します。異常終了後は「復元」で同じReview位置を再開し、すぐ通常Pathへ保存・書出します。旧形式のActionSpecのみの復元Fileも読込可能です。
 
 ```text
 my-action-project/
@@ -239,7 +239,7 @@ Lifecycle APIは限定的です。Hitboxは`hitbox_opened/closed`、Cancel windo
 - **音が出ない**：WAV／OGGとEvent `asset_key`の対応を確認します。
 - **Branchしない**：`at_tick`前に結果を報告し、Target Markerが後方か確認します。
 - **元JSONを移動した**：`.adproject`の埋込ActionSpecを開き、再書出・Asset再配置します。
-- **異常終了**：「復元」で30秒Autosaveを開き、通常Pathへ保存します。
+- **異常終了**：「復元」で30秒Workspace AutosaveのTakeペア、A/B状態、Playheadを再開し、通常Pathへ保存・書出します。
 
 ## 17. Alphaの制限
 
