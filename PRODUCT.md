@@ -45,6 +45,8 @@ hitboxes, motion, feel, camera, and game events share one reviewable contract.
 - Rehearse a 2D or 3D action; a project never mixes coordinate dimensions.
 - Compare any two complete Take copies with identical starting input, including
   non-adjacent versions in projects with three or more Takes.
+- Reopen an `.adproject` at the saved primary Take, comparison Take, A/B
+  visibility, and playhead tick instead of reconstructing the review state.
 - Export `.action.json` as source of truth and optionally cache it as a Godot
   `.tres` resource through the runtime addon.
 - Keep unpublished game assets local. The application has no account,

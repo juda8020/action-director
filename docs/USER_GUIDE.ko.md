@@ -63,7 +63,7 @@ Track은 animation, window, hitbox, motion, feel, audio 같은 목적별로 Even
 
 ## 6. 파일 관리
 
-- **`.adproject`**: 편집 작업공간. 프로젝트 정보, Asset 색인, 내장 ActionSpec 복구본을 저장합니다. 외부 Asset을 가져오기 전에 먼저 저장하세요.
+- **`.adproject`**: 편집 작업공간. 프로젝트 정보, Asset 색인, 내장 ActionSpec 복구본과 함께 기본 Take, 비교 Take, A/B 표시 상태, playhead tick을 저장합니다. 다시 열면 같은 검토 위치로 돌아갑니다. 외부 Asset을 가져오기 전에 먼저 저장하세요.
 - **`.action.json`**: Godot 통합과 Git 검토의 공식 원본입니다. 생성된 `.tres`만 유일한 원본으로 사용하지 마세요.
 - **자동 저장**: 30초마다 복구 ActionSpec을 저장합니다. 비정상 종료 후 **복구**로 열고 정상 위치에 즉시 저장합니다.
 

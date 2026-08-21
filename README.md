@@ -56,7 +56,8 @@ and update requirements are documented in [CONTRIBUTING.md](CONTRIBUTING.md).
   the first imported glTF, GLB, or Mixamo FBX replaces the 3D proxy and plays
   its animation using the timeline clip name (or the first available clip as a
   recoverable fallback); matching WAV or OGG events play during rehearsal.
-- `.adproject` workspace save with safe replacement and recovery backup.
+- `.adproject` workspace save with safe replacement, recovery backup, and the
+  active Take pair, A/B visibility, and playhead restored on reopen.
 - Thirty-second action autosave and explicit recovery.
 - `ActionSpec`, `ActionDirectorPlayer`, 2D/3D actor adapters, camera adapter,
   audio/VFX adapter, and JSON-to-TRES cache utility.
@@ -85,7 +86,9 @@ track label to select the whole track; Delete Event and Delete Track remain
 fully undoable.
 Save an `.adproject` before importing assets; this gives copied files a stable
 project-relative home. The project embeds the current ActionSpec, so it can
-reopen even if the original exported action file later moves.
+reopen even if the original exported action file later moves. It also restores
+the primary Take, comparison Take, A/B visibility, and playhead tick so a review
+can continue from the same frame.
 
 On first launch, the optional tutorial opens to a five-minute A/B rehearsal.
 Experienced users can skip it. Choose **Tutorial** in the transport bar at any

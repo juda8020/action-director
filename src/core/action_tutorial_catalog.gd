@@ -26,7 +26,7 @@ const CONTENT := {
 			["Compare takes", "Duplicate Take creates a full independent copy with new IDs. A/B comparison ignores those regenerated IDs and reports real timing or payload changes."],
 		]},
 		"workspace": {"title": "Projects, source files, and recovery", "summary": "Keep editable workspaces, portable action specs, and imported assets organized safely.", "time": "5 min", "action": "none", "steps": [
-			["Save the workspace", ".adproject stores project data, the asset index, and an embedded ActionSpec recovery copy. Save it before importing assets so relative paths are stable."],
+			["Save the workspace", ".adproject stores project data, the asset index, an embedded ActionSpec recovery copy, and the active Take pair, A/B visibility, and playhead tick. Save it before importing assets so relative paths are stable."],
 			["Export the source of truth", ".action.json is the portable, version-control-friendly contract. Generated .action.tres files are caches, never the only source."],
 			["Keep the folder together", "Store the .adproject, actions, and assets under one project folder. Relocate missing assets instead of deleting their tracks."],
 			["Recover deliberately", "Recover opens the 30-second autosave. Inspect it, then immediately save and export to normal paths; autosave does not replace Git."],
@@ -96,7 +96,7 @@ const CONTENT := {
 			["比較 Take", "「複製 Take」會建立完整獨立副本與新 ID；A/B 比較忽略重建 ID，只回報真正的時序或 payload 差異。"],
 		]},
 		"workspace": {"title": "專案、正式檔案與復原", "summary": "正確管理工作區、ActionSpec、外部素材與異常復原。", "time": "5 分鐘", "action": "none", "steps": [
-			["保存工作區", ".adproject 保存專案資料、素材索引與內嵌 ActionSpec 復原副本。匯入素材前先儲存，才能建立穩定相對路徑。"],
+			["保存工作區", ".adproject 保存專案資料、素材索引、內嵌 ActionSpec 復原副本，以及主要／比較 Take、A／B 顯示狀態與播放 tick。匯入素材前先儲存，才能建立穩定相對路徑。"],
 			["匯出正式來源", ".action.json 是可攜、適合版本控制的正式契約；.action.tres 是可重建快取，不能作為唯一來源。"],
 			["整個資料夾一起管理", "把 .adproject、actions 與 assets 放在同一專案資料夾；素材遺失時重新定位，不要刪除軌道。"],
 			["正確使用復原", "「復原」會開啟每 30 秒自動存檔。確認內容後立刻保存並匯出到正常路徑；自動存檔不能取代 Git。"],
@@ -166,7 +166,7 @@ const CONTENT := {
 			["Takeを比較", "Take複製は新しいIDの完全コピーを作ります。A/B比較はIDの違いを無視し、実際の時間・payload差分を示します。"],
 		]},
 		"workspace": {"title": "Project、正式Source、復元", "summary": "Workspace、ActionSpec、外部Asset、異常終了の復元を安全に管理します。", "time": "5分", "action": "none", "steps": [
-			["Workspaceを保存", ".adprojectはProject情報、Asset索引、埋込ActionSpecを保存します。Asset読込前に保存して相対Pathを安定させます。"],
+			["Workspaceを保存", ".adprojectはProject情報、Asset索引、埋込ActionSpecに加え、Primary／比較Take、A/B表示状態、Playhead tickを保存します。Asset読込前に保存して相対Pathを安定させます。"],
 			["正式Sourceを書出", ".action.jsonがVersion control用の正本で、.action.tresは再生成可能なCacheです。"],
 			["Folderごと管理", ".adproject、actions、assetsを同じProject folderへ置き、Missing AssetはTrackを消さず再配置します。"],
 			["復元を確定保存", "復元は30秒Autosaveを開きます。内容確認後すぐ通常Pathへ保存・書出し、Gitの代用にはしません。"],
@@ -236,7 +236,7 @@ const CONTENT := {
 			["Take 비교", "Take 복제는 새 ID의 완전한 복사본을 만듭니다. A/B는 ID 차이를 무시하고 실제 시간/payload 차이만 보여줍니다."],
 		]},
 		"workspace": {"title": "프로젝트, 공식 원본, 복구", "summary": "작업공간, ActionSpec, 외부 에셋과 비정상 종료 복구를 안전하게 관리합니다.", "time": "5분", "action": "none", "steps": [
-			["작업공간 저장", ".adproject는 프로젝트 정보, Asset 색인, 내장 ActionSpec을 저장합니다. 에셋 가져오기 전에 저장해 상대 경로를 고정합니다."],
+			["작업공간 저장", ".adproject는 프로젝트 정보, Asset 색인, 내장 ActionSpec과 함께 기본/비교 Take, A/B 표시 상태, playhead tick을 저장합니다. 에셋 가져오기 전에 저장해 상대 경로를 고정합니다."],
 			["공식 원본 내보내기", ".action.json이 버전 관리용 원본이며 .action.tres는 다시 만들 수 있는 캐시입니다."],
 			["폴더 전체 관리", ".adproject, actions, assets를 같은 프로젝트 폴더에 두고 누락 Asset은 Track을 지우지 말고 다시 지정합니다."],
 			["복구 후 정상 저장", "복구는 30초 autosave를 엽니다. 확인 후 즉시 정상 위치로 저장·내보내며 Git 대용으로 사용하지 않습니다."],

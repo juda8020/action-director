@@ -24,6 +24,7 @@ func _initialize() -> void:
 	_test_frame_rate_independence()
 	_test_inclusive_event_lifecycle()
 	_test_project_round_trip()
+	_test_project_reopens_comparison_workspace()
 	_test_take_duplication()
 	_test_semantic_comparison()
 	_test_branch_skip_closes_cancel_window()
@@ -48,7 +49,7 @@ func _initialize() -> void:
 	_test_duplicate_take_undo_redo()
 	_test_take_switch_rebinds_inspector_duration()
 	if failures.is_empty():
-		print("Action Director tests passed: 38/38")
+		print("Action Director tests passed: 39/39")
 		quit(0)
 	else:
 		for failure in failures:
@@ -307,6 +308,49 @@ func _test_project_round_trip() -> void:
 		DirAccess.remove_absolute(path)
 	if FileAccess.file_exists(path + ".backup"):
 		DirAccess.remove_absolute(path + ".backup")
+
+
+func _test_project_reopens_comparison_workspace() -> void:
+	var app := AppScript.new()
+	app._ready()
+	var third := TakeUtils.duplicate_take(app.spec.get_take("Take A"), app.spec.get_take_names())
+	third.name = "Take C"
+	app.spec.data.takes.append(third)
+	app.spec.data.assets = []
+	app.current_take_name = "Take B"
+	app.compare_take_name = "Take C"
+	app.compare_enabled = false
+	app._rebuild_workspace()
+	app._set_tick(12)
+	app.project_data.workspace["future_panel_mode"] = "wide"
+	var path := "user://comparison-workspace.adproject"
+	app._write_project(path)
+	var reopened := AppScript.new()
+	reopened._ready()
+	reopened._open_project(path)
+	_expect(reopened.current_take_name == "Take B" and reopened.compare_take_name == "Take C", "Reopening an .adproject must restore the selected primary and comparison Takes instead of returning to the first pair.")
+	_expect(not reopened.compare_enabled and reopened.current_tick == 12, "Reopening an .adproject must restore the A/B visibility and playhead tick so review can continue in place.")
+	_expect(reopened.compare_button != null and not reopened.compare_button.button_pressed and not reopened.compare_stage_holder.visible, "Restored comparison state must update the visible A/B controls, not only internal fields.")
+	_expect(String(reopened.project_data.workspace.get("future_panel_mode", "")) == "wide", "Saving review state must preserve unknown workspace fields for forward-compatible project recovery.")
+	var legacy_path := "user://legacy-comparison-workspace.adproject"
+	var legacy_project := ActionProjectStore.create_from_action("", app.spec.data)
+	for key: String in ["current_take", "compare_take", "compare_enabled", "preview_tick"]:
+		legacy_project.workspace.erase(key)
+	ActionProjectStore.save_project(legacy_project, legacy_path)
+	reopened._open_project(legacy_path)
+	_expect(reopened.current_take_name == "Take A" and reopened.compare_take_name == "Take B" and reopened.compare_enabled and reopened.current_tick == 0, "Older .adproject files without review-state fields must reopen with a safe first-pair, tick-zero fallback.")
+	for instance in [app, reopened]:
+		instance.undo_redo.free()
+		instance.undo_redo = null
+		instance.free()
+	if FileAccess.file_exists(path):
+		DirAccess.remove_absolute(path)
+	if FileAccess.file_exists(path + ".backup"):
+		DirAccess.remove_absolute(path + ".backup")
+	if FileAccess.file_exists(legacy_path):
+		DirAccess.remove_absolute(legacy_path)
+	if FileAccess.file_exists(legacy_path + ".backup"):
+		DirAccess.remove_absolute(legacy_path + ".backup")
 
 
 func _test_take_duplication() -> void:

@@ -43,6 +43,8 @@ comparison stages retain
 green and amber identities in both 2D and 3D, while the timeline names the
 current selection before exposing contextual destructive actions. An empty
 Inspector teaches the selection path instead of showing inactive edit fields.
+Saving the workspace preserves the active Take pair, A/B visibility, and
+playhead tick; reopening resumes that review state without changing ActionSpec.
 The v0.1 Alpha desktop workspace supports widths of 1280 pixels and above.
 Responsive inspector collapse is a public-release requirement, not an Alpha
 claim.

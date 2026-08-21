@@ -63,7 +63,7 @@ Trackは用途別にEventを整理します。Runtimeは見た目の推測では
 
 ## 6. ファイル管理
 
-- **`.adproject`**：編集用ワークスペース。プロジェクト情報、Asset索引、埋込ActionSpec復元コピーを保持します。外部Asset読込前に保存してください。
+- **`.adproject`**：編集用ワークスペース。プロジェクト情報、Asset索引、埋込ActionSpec復元コピーに加え、Primary Take、比較Take、A/B表示状態、Playhead tickを保持します。再度開くと同じレビュー位置へ戻ります。外部Asset読込前に保存してください。
 - **`.action.json`**：Godot連携とGitレビューの正式ソース。生成`.tres`だけを正本にしないでください。
 - **自動保存**：30秒ごとに復元ActionSpecを保存します。異常終了後は「復元」で開き、内容確認後すぐ通常Pathへ保存します。
 

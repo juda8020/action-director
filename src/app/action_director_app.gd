@@ -532,11 +532,22 @@ func _open_project(path: String) -> void:
 	project_path = path
 	action_path = String(project_data.get("action_source", ""))
 	spec = ActionSpecCodec.from_dictionary(project_data.action_data, action_path)
-	current_take_name = spec.get_default_take_name()
 	var names := spec.get_take_names()
-	compare_take_name = names[1] if names.size() > 1 else current_take_name
-	_set_tick(0)
+	var workspace_value: Variant = project_data.get("workspace", {})
+	var workspace: Dictionary = workspace_value if workspace_value is Dictionary else {}
+	var saved_primary := String(workspace.get("current_take", spec.get_default_take_name()))
+	current_take_name = saved_primary if saved_primary in names else spec.get_default_take_name()
+	var saved_compare := String(workspace.get("compare_take", ""))
+	compare_take_name = saved_compare if saved_compare in names and saved_compare != current_take_name else current_take_name
+	if compare_take_name == current_take_name:
+		for name: String in names:
+			if name != current_take_name:
+				compare_take_name = name
+				break
+	compare_enabled = bool(workspace.get("compare_enabled", true))
+	current_tick = 0
 	_rebuild_workspace()
+	_set_tick(maxi(0, int(workspace.get("preview_tick", 0))))
 	var source_note := "" if action_path == "" or FileAccess.file_exists(action_path) else localization.text("project_source_missing")
 	_set_status(localization.text("project_opened", [project_data.get("name", path.get_file()), source_note]))
 
@@ -554,6 +565,7 @@ func _rebuild_workspace() -> void:
 		take_tabs.current_tab = active_index
 	_populate_compare_take_picker()
 	_rebuild_stages()
+	_sync_compare_controls()
 	timeline.set_take(spec, current_take_name)
 	timeline.clear_selection()
 	inspector.set_spec(spec, current_take_name)
@@ -663,10 +675,16 @@ func _toggle_playback() -> void:
 
 func _toggle_compare() -> void:
 	compare_enabled = not compare_enabled
-	compare_button.text = localization.text("compare_on") if compare_enabled else localization.text("compare_off")
-	compare_button.button_pressed = compare_enabled
-	compare_stage_holder.visible = compare_enabled and compare_take_name != current_take_name
+	_sync_compare_controls()
 	_update_comparison_summary()
+
+
+func _sync_compare_controls() -> void:
+	if compare_button != null:
+		compare_button.text = localization.text("compare_on") if compare_enabled else localization.text("compare_off")
+		compare_button.button_pressed = compare_enabled
+	if compare_stage_holder != null:
+		compare_stage_holder.visible = compare_enabled and compare_take_name != current_take_name
 
 
 func _on_take_tab_changed(index: int) -> void:
@@ -1102,6 +1120,13 @@ func _write_project(path: String) -> void:
 	project_data.action_source = action_path
 	project_data.action_data = spec.data.duplicate(true)
 	project_data.assets = spec.data.get("assets", []).duplicate(true)
+	var workspace_value: Variant = project_data.get("workspace", {})
+	var workspace: Dictionary = workspace_value.duplicate(true) if workspace_value is Dictionary else {}
+	workspace["current_take"] = current_take_name
+	workspace["compare_take"] = compare_take_name
+	workspace["compare_enabled"] = compare_enabled
+	workspace["preview_tick"] = current_tick
+	project_data["workspace"] = workspace
 	var result := ActionProjectStore.save_project(project_data, path)
 	var save_message := localization.text("saved_project", [localization.text("saved_backup") if result.get("backup", "") != "" else ""]) if result.ok else _localized_error(result)
 	_set_status(save_message, not result.ok)

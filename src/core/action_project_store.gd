@@ -14,7 +14,15 @@ static func create_from_action(action_path: String, action_data: Dictionary) -> 
 		"action_data": action_data.duplicate(true),
 		"assets": action_data.get("assets", []).duplicate(true),
 		"stage": {"grid": true, "ground": true, "camera": {}},
-		"workspace": {"left_width": 270, "right_width": 300, "timeline_height": 300},
+		"workspace": {
+			"left_width": 270,
+			"right_width": 300,
+			"timeline_height": 300,
+			"current_take": String(action_data.get("takes", [{}])[0].get("name", "Default")) if not action_data.get("takes", []).is_empty() else "Default",
+			"compare_take": "",
+			"compare_enabled": true,
+			"preview_tick": 0,
+		},
 	}
 
 

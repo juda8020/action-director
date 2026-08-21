@@ -72,7 +72,7 @@ Change one related variable group at a time. A useful first experiment is moving
 
 ### `.adproject`
 
-The editable workspace. It contains project data, the asset index, and an embedded recovery copy of the current ActionSpec. Save it before importing external assets so copied files have a stable project-relative location.
+The editable workspace. It contains project data, the asset index, an embedded recovery copy of the current ActionSpec, and the current review position. Reopening it restores the primary Take, comparison Take, A/B visibility, and playhead tick. Save it before importing external assets so copied files have a stable project-relative location.
 
 ### `.action.json`
 
