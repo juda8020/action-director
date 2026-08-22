@@ -1159,17 +1159,28 @@ func _autosave() -> void:
 
 
 func _recover_autosave() -> void:
+	var recovery_found := false
 	if FileAccess.file_exists(AUTOSAVE_PATH):
+		recovery_found = true
 		if _open_project(AUTOSAVE_PATH):
 			project_path = ""
 			_set_status(localization.text("recovered_workspace"))
-		return
+			return
+	var backup_path := AUTOSAVE_PATH + ".backup"
+	if FileAccess.file_exists(backup_path):
+		recovery_found = true
+		if _open_project(backup_path):
+			project_path = ""
+			_set_status(localization.text("recovered_workspace_backup"))
+			return
 	if FileAccess.file_exists(LEGACY_AUTOSAVE_PATH):
+		recovery_found = true
 		if _open_action(LEGACY_AUTOSAVE_PATH):
 			project_path = ""
 			_set_status(localization.text("recovered_legacy"))
-		return
-	_set_status(localization.text("no_recovery"), true)
+			return
+	if not recovery_found:
+		_set_status(localization.text("no_recovery"), true)
 
 
 func _max_preview_duration() -> int:

@@ -26,6 +26,7 @@ func _initialize() -> void:
 	_test_project_round_trip()
 	_test_project_reopens_comparison_workspace()
 	_test_recovery_restores_comparison_workspace()
+	_test_recovery_uses_previous_valid_backup()
 	_test_take_duplication()
 	_test_semantic_comparison()
 	_test_branch_skip_closes_cancel_window()
@@ -50,7 +51,7 @@ func _initialize() -> void:
 	_test_duplicate_take_undo_redo()
 	_test_take_switch_rebinds_inspector_duration()
 	if failures.is_empty():
-		print("Action Director tests passed: 40/40")
+		print("Action Director tests passed: 41/41")
 		quit(0)
 	else:
 		for failure in failures:
@@ -397,6 +398,50 @@ func _test_recovery_restores_comparison_workspace() -> void:
 		DirAccess.remove_absolute("user://recovery.action.json")
 
 
+func _test_recovery_uses_previous_valid_backup() -> void:
+	var recovery_path := "user://recovery.adproject"
+	for suffix: String in ["", ".backup", ".tmp"]:
+		if FileAccess.file_exists(recovery_path + suffix):
+			DirAccess.remove_absolute(recovery_path + suffix)
+	if FileAccess.file_exists("user://recovery.action.json"):
+		DirAccess.remove_absolute("user://recovery.action.json")
+	var app := AppScript.new()
+	app._ready()
+	var third := TakeUtils.duplicate_take(app.spec.get_take("Take A"), app.spec.get_take_names())
+	third.name = "Take C"
+	app.spec.data.takes.append(third)
+	app.spec.data.assets = []
+	app.current_take_name = "Take B"
+	app.compare_take_name = "Take C"
+	app.compare_enabled = false
+	app._rebuild_workspace()
+	app._set_tick(14)
+	app._autosave()
+	app.current_take_name = "Take A"
+	app.compare_take_name = "Take B"
+	app.compare_enabled = true
+	app._rebuild_workspace()
+	app._set_tick(22)
+	app._autosave()
+	var damaged := FileAccess.open(recovery_path, FileAccess.WRITE)
+	damaged.store_string("{not valid json")
+	damaged.close()
+	var recovered := AppScript.new()
+	recovered._ready()
+	recovered._recover_autosave()
+	_expect(recovered.current_take_name == "Take B" and recovered.compare_take_name == "Take C", "If the newest recovery workspace is damaged, Recover must fall back to the previous valid backup Take pair.")
+	_expect(not recovered.compare_enabled and recovered.current_tick == 14, "Backup recovery must restore the previous A/B visibility and playhead instead of leaving the default review state.")
+	_expect(recovered.project_path == "", "A recovered backup must still require Save As instead of binding the internal backup path.")
+	_expect(recovered.status_label.text == recovered.localization.text("recovered_workspace_backup"), "Backup recovery must explain that the latest workspace was damaged and the previous backup was used.")
+	for instance in [app, recovered]:
+		instance.undo_redo.free()
+		instance.undo_redo = null
+		instance.free()
+	for suffix: String in ["", ".backup", ".tmp"]:
+		if FileAccess.file_exists(recovery_path + suffix):
+			DirAccess.remove_absolute(recovery_path + suffix)
+
+
 func _test_take_duplication() -> void:
 	var loaded := ActionSpecCodec.load_json("res://samples/actions/sword_strike.action.json")
 	var source: Dictionary = loaded.spec.get_take("Take B")
@@ -454,7 +499,7 @@ func _test_localization_catalog() -> void:
 	for locale: String in ActionLocalization.SUPPORTED_LOCALES:
 		var catalog := ActionLocalization.new(locale)
 		_expect(catalog.text("open") != "open" and catalog.text("payload_invalid") != "payload_invalid", "Every supported locale must contain core editor and error strings: %s." % locale)
-		_expect(catalog.text("recovered_workspace") != "recovered_workspace" and catalog.text("recovered_legacy") != "recovered_legacy" and catalog.text("tip_recover") != "tip_recover", "Every supported locale must explain current and legacy crash recovery: %s." % locale)
+		_expect(catalog.text("recovered_workspace") != "recovered_workspace" and catalog.text("recovered_workspace_backup") != "recovered_workspace_backup" and catalog.text("recovered_legacy") != "recovered_legacy" and catalog.text("tip_recover") != "tip_recover", "Every supported locale must explain current, backup, and legacy crash recovery: %s." % locale)
 		var locale_keys: Array = ActionLocalization.STRINGS[locale].keys()
 		for key: Variant in reference_keys:
 			_expect(key in locale_keys, "Locale %s must include catalog key %s." % [locale, key])

@@ -47,7 +47,9 @@ Saving the workspace preserves the active Take pair, A/B visibility, and
 playhead tick; reopening resumes that review state without changing ActionSpec.
 Crash recovery uses the same review-state contract every 30 seconds. A recovered
 internal snapshot never becomes the user's normal project path, so the next save
-still asks for an explicit durable location.
+still asks for an explicit durable location. Recover tries the newest workspace,
+then its previous valid backup, then the legacy action-only autosave; damaged
+files stay untouched and the status message names when the backup was used.
 The v0.1 Alpha desktop workspace supports widths of 1280 pixels and above.
 Responsive inspector collapse is a public-release requirement, not an Alpha
 claim.

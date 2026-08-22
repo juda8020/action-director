@@ -65,7 +65,7 @@ Track은 animation, window, hitbox, motion, feel, audio 같은 목적별로 Even
 
 - **`.adproject`**: 편집 작업공간. 프로젝트 정보, Asset 색인, 내장 ActionSpec 복구본과 함께 기본 Take, 비교 Take, A/B 표시 상태, playhead tick을 저장합니다. 다시 열면 같은 검토 위치로 돌아갑니다. 외부 Asset을 가져오기 전에 먼저 저장하세요.
 - **`.action.json`**: Godot 통합과 Git 검토의 공식 원본입니다. 생성된 `.tres`만 유일한 원본으로 사용하지 마세요.
-- **자동 저장**: 30초마다 내장 ActionSpec, 기본/비교 Take, A/B 표시 상태, playhead tick이 포함된 복구 작업공간을 저장합니다. 비정상 종료 후 **복구**로 같은 검토 위치를 이어서 열고 즉시 정상 경로에 저장·내보냅니다. 이전 형식의 ActionSpec 전용 복구 파일도 열 수 있습니다.
+- **자동 저장**: 30초마다 내장 ActionSpec, 기본/비교 Take, A/B 표시 상태, playhead tick이 포함된 복구 작업공간을 저장합니다. 비정상 종료 후 **복구**로 같은 검토 위치를 이어서 엽니다. 최신 복구 작업공간이 손상되었으면 이전의 유효한 30초 백업을 자동으로 시도하고 백업 사용 사실을 명확히 알립니다. 손상 파일은 다시 쓰지 않습니다. 확인 후 즉시 정상 경로에 저장·내보냅니다. 이전 형식의 ActionSpec 전용 복구 파일도 열 수 있습니다.
 
 ```text
 my-action-project/
@@ -239,7 +239,7 @@ Lifecycle API는 제한적입니다. Hitbox는 `hitbox_opened/closed`, Cancel wi
 - **소리가 안 남**: WAV/OGG와 Event `asset_key` 대응을 확인합니다.
 - **Branch가 실행되지 않음**: `at_tick` 전에 결과가 보고되었는지, target marker가 뒤에 있는지 확인합니다.
 - **원본 JSON 이동**: `.adproject` 내장 ActionSpec을 열고 다시 내보내며 외부 Asset을 재지정합니다.
-- **비정상 종료**: **복구**로 30초 작업공간 autosave의 Take 쌍, A/B 상태, playhead를 이어서 열고 정상 경로에 저장·내보냅니다.
+- **비정상 종료**: **복구**로 30초 작업공간 autosave의 Take 쌍, A/B 상태, playhead를 이어서 엽니다. 최신 파일이 손상되었으면 이전 유효 백업을 자동으로 시도합니다. 이후 정상 경로에 저장·내보냅니다.
 
 ## 17. Alpha 제한
 

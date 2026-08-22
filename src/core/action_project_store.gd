@@ -32,7 +32,10 @@ static func load_project(path: String) -> Dictionary:
 	var file := FileAccess.open(path, FileAccess.READ)
 	if file == null:
 		return _failure("project_cannot_open", [path], "Project file could not be opened: %s" % path)
-	var parsed: Variant = JSON.parse_string(file.get_as_text())
+	var parser := JSON.new()
+	if parser.parse(file.get_as_text()) != OK:
+		return _failure("project_damaged", [], "Project file is damaged. The original file was not changed.")
+	var parsed: Variant = parser.data
 	if not parsed is Dictionary:
 		return _failure("project_damaged", [], "Project file is damaged. The original file was not changed.")
 	if String(parsed.get("schema_version", "")) == "":

@@ -59,7 +59,8 @@ and update requirements are documented in [CONTRIBUTING.md](CONTRIBUTING.md).
 - `.adproject` workspace save with safe replacement, recovery backup, and the
   active Take pair, A/B visibility, and playhead restored on reopen.
 - Thirty-second workspace recovery restores the active Take pair, A/B visibility,
-  and playhead; older action-only autosaves remain readable.
+  and playhead. If the newest recovery file is damaged, Recover tries the previous
+  valid backup before falling back to older action-only autosaves.
 - `ActionSpec`, `ActionDirectorPlayer`, 2D/3D actor adapters, camera adapter,
   audio/VFX adapter, and JSON-to-TRES cache utility.
 - Forward-only conditional branches and automatic miss fallback.

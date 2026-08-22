@@ -77,7 +77,8 @@ hitboxes, motion, feel, camera, and game events share one reviewable contract.
   Godot ownership boundaries, collaboration, and recovery.
 - The 30-second crash-recovery workspace restores the active Take pair, A/B
   visibility, and playhead without binding the internal recovery file as the
-  user's normal project path. Older action-only autosaves remain readable.
+  user's normal project path. If the newest workspace is damaged, recovery tries
+  the previous valid backup before older action-only autosaves.
 
 ## Evidence on Hand
 
