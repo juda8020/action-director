@@ -120,7 +120,10 @@ Set `GODOT_BIN` when Godot is installed elsewhere. The test suite validates
 both sample formats, schema failures, compatibility preservation,
 deterministic event order at 30/60/120 FPS, exact event lifetimes, miss
 fallback, branch cleanup, project round trips, independent take duplication,
-semantic A/B comparison, and the `.tres` cache path.
+semantic A/B comparison, and the `.tres` cache path. The script copies the
+project to a disposable directory and completes Godot's first import before it
+runs the suite, so a fresh clone needs no manual editor launch and the source
+worktree stays unchanged.
 
 ## Build local packages
 
